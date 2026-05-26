@@ -1,6 +1,22 @@
 {
   "tasks": [],
   "completed": [],
-  "recurring": [],
+  "recurring": [
+    {
+      "id": "8f3a2c1d-4b5e-6f7a-8c9d-0e1f2a3b4c5d",
+      "title": "Prep 1:1 notes for Annie",
+      "priority": "high",
+      "category": "1:1s",
+      "missed_count": 0,
+      "last_completed_at": null,
+      "last_missed_at": null,
+      "recurrence": {
+        "frequency": "weekly",
+        "day_of_week": "monday",
+        "due_time": "09:00",
+        "timezone": "America/Denver"
+      }
+    }
+  ],
   "reflections": []
 }
