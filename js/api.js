@@ -14,7 +14,9 @@ export function clearConfig() {
 }
 
 export async function fetchTasks() {
-  const { owner, repo, token } = getConfig();
+  const config = getConfig();
+  if (!config) throw new Error('GitHub config is not set. Open settings to connect your repo.');
+  const { owner, repo, token } = config;
   const res = await fetch(
     `https://api.github.com/repos/${owner}/${repo}/contents/tasks.json`,
     {
@@ -26,13 +28,19 @@ export async function fetchTasks() {
   );
   if (!res.ok) throw new Error(`GitHub API ${res.status}: ${res.statusText}`);
   const data = await res.json();
-  const content = JSON.parse(decodeURIComponent(escape(atob(data.content.replace(/\n/g, '')))));
+  const raw = atob(data.content.replace(/\n/g, ''));
+  const content = JSON.parse(new TextDecoder().decode(
+    Uint8Array.from(raw, c => c.charCodeAt(0))
+  ));
   return { data: content, sha: data.sha };
 }
 
 export async function saveTasks(tasks, sha) {
-  const { owner, repo, token } = getConfig();
-  const encoded = btoa(unescape(encodeURIComponent(JSON.stringify(tasks, null, 2))));
+  const config = getConfig();
+  if (!config) throw new Error('GitHub config is not set. Open settings to connect your repo.');
+  const { owner, repo, token } = config;
+  const bytes = new TextEncoder().encode(JSON.stringify(tasks, null, 2));
+  const encoded = btoa(String.fromCharCode(...bytes));
   const res = await fetch(
     `https://api.github.com/repos/${owner}/${repo}/contents/tasks.json`,
     {
