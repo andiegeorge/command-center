@@ -1,4 +1,4 @@
-import { getTodayTasks, getComingUpTasks, getEverythingElse, DAILY_HOUR_THRESHOLD, sumHours, formatHours } from './state.js';
+import { getTodayTasks, getComingUpTasks, getEverythingElse, DAILY_HOUR_THRESHOLD, LIGHT_DAY_THRESHOLD, sumHours, formatHours, getFlexibleSuggestions } from './state.js';
 import { isDueToday, isDueWithinDays } from './recurring.js';
 
 const PRIORITY_ORDER = { high: 0, medium: 1, low: 2 };
@@ -14,9 +14,9 @@ function todayStr() {
   return new Date().toISOString().split('T')[0];
 }
 
-export function makeTaskCard({ task, onComplete, onDelete, isOverdue = false, isMissed = false, missedCount = 0, deletable = true }) {
+export function makeTaskCard({ task, onComplete, onDelete, onToggleCritical, isOverdue = false, isMissed = false, missedCount = 0, deletable = true }) {
   const li = document.createElement('li');
-  li.className = 'task-card' + (isOverdue ? ' overdue' : '');
+  li.className = 'task-card' + (isOverdue ? ' overdue' : '') + (task.critical ? ' critical' : '');
   li.dataset.id = task.id;
   li.dataset.priority = task.priority;
 
@@ -42,6 +42,14 @@ export function makeTaskCard({ task, onComplete, onDelete, isOverdue = false, is
   const meta = document.createElement('div');
   meta.className = 'task-meta';
 
+  if (task.critical) {
+    const crit = document.createElement('span');
+    crit.className = 'task-critical-badge';
+    crit.textContent = '!';
+    crit.title = 'Critical';
+    meta.appendChild(crit);
+  }
+
   if (task.category) {
     const cat = document.createElement('span');
     cat.className = 'task-category';
@@ -65,23 +73,34 @@ export function makeTaskCard({ task, onComplete, onDelete, isOverdue = false, is
   body.appendChild(title);
   if (meta.children.length) body.appendChild(meta);
 
+  li.appendChild(checkbox);
+  li.appendChild(body);
+
+  if (deletable && onToggleCritical) {
+    const critBtn = document.createElement('button');
+    critBtn.className = 'critical-btn';
+    critBtn.textContent = '!';
+    critBtn.title = task.critical ? 'Unmark critical' : 'Mark critical';
+    critBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      onToggleCritical(task.id);
+    });
+    li.appendChild(critBtn);
+  }
+
   if (deletable) {
     const deleteBtn = document.createElement('button');
     deleteBtn.className = 'delete-btn';
     deleteBtn.textContent = '×';
     deleteBtn.title = 'Delete';
     deleteBtn.addEventListener('click', () => onDelete(task.id));
-    li.appendChild(checkbox);
-    li.appendChild(body);
     li.appendChild(deleteBtn);
-  } else {
-    li.appendChild(checkbox);
-    li.appendChild(body);
   }
+
   return li;
 }
 
-export function renderTodayZone(data, { onComplete, onDelete }) {
+export function renderTodayZone(data, { onComplete, onDelete, onToggleCritical }) {
   const list = document.getElementById('today-list');
   const empty = document.getElementById('today-empty');
   const count = document.getElementById('today-count');
@@ -122,6 +141,7 @@ export function renderTodayZone(data, { onComplete, onDelete }) {
       task,
       onComplete: task._isRecurring ? (id) => onComplete(id, true) : onComplete,
       onDelete,
+      onToggleCritical: task._isRecurring ? null : onToggleCritical,
       isOverdue,
       isMissed,
       missedCount: task.missed_count || 0,
@@ -130,7 +150,7 @@ export function renderTodayZone(data, { onComplete, onDelete }) {
   });
 }
 
-export function renderComingUpZone(data, { onComplete, onDelete }) {
+export function renderComingUpZone(data, { onComplete, onDelete, onToggleCritical }) {
   const container = document.getElementById('coming-up-list');
   const empty = document.getElementById('coming-up-empty');
   container.innerHTML = '';
@@ -162,14 +182,25 @@ export function renderComingUpZone(data, { onComplete, onDelete }) {
     byDate[t.due_date].push(t);
   });
 
-  Object.entries(byDate).forEach(([date, tasks]) => {
+  // First date is expanded by default; rest are collapsed.
+  const sortedDates = Object.keys(byDate).sort();
+  sortedDates.forEach((date, idx) => {
+    const tasks = byDate[date];
     const dayEl = document.createElement('div');
-    dayEl.className = 'coming-up-day';
+    dayEl.className = 'coming-up-day' + (idx === 0 ? '' : ' collapsed');
 
     const d = new Date(date + 'T00:00:00');
     const label = document.createElement('div');
     label.className = 'coming-up-day-label';
-    label.textContent = `${DAY_NAMES[d.getDay()]} · ${MONTH_NAMES[d.getMonth()]} ${d.getDate()}`;
+
+    const caret = document.createElement('span');
+    caret.className = 'coming-up-day-caret';
+    caret.textContent = '▼';
+    label.appendChild(caret);
+
+    const labelText = document.createElement('span');
+    labelText.textContent = `${DAY_NAMES[d.getDay()]} · ${MONTH_NAMES[d.getMonth()]} ${d.getDate()}`;
+    label.appendChild(labelText);
 
     const dayHours = sumHours(tasks);
     if (dayHours > 0) {
@@ -182,6 +213,8 @@ export function renderComingUpZone(data, { onComplete, onDelete }) {
       }
       label.appendChild(hoursEl);
     }
+
+    label.addEventListener('click', () => dayEl.classList.toggle('collapsed'));
     dayEl.appendChild(label);
 
     const ul = document.createElement('ul');
@@ -191,6 +224,7 @@ export function renderComingUpZone(data, { onComplete, onDelete }) {
         task,
         onComplete: task._isRecurring ? (id) => onComplete(id, true) : onComplete,
         onDelete,
+        onToggleCritical: task._isRecurring ? null : onToggleCritical,
         deletable: !task._isRecurring
       }));
     });
@@ -199,11 +233,60 @@ export function renderComingUpZone(data, { onComplete, onDelete }) {
   });
 }
 
-export function renderEverythingElse(data, { onComplete, onDelete }) {
+export function renderEverythingElse(data, { onComplete, onDelete, onToggleCritical }) {
   const list = document.getElementById('everything-else-list');
   list.innerHTML = '';
   const tasks = getEverythingElse(data.tasks);
-  tasks.forEach(task => list.appendChild(makeTaskCard({ task, onComplete, onDelete })));
+  tasks.forEach(task => list.appendChild(makeTaskCard({ task, onComplete, onDelete, onToggleCritical })));
+}
+
+export function renderLightDayBanner(data, todayTotalHours, { onPull }) {
+  const banner = document.getElementById('light-day-banner');
+  const header = document.getElementById('light-day-header');
+  const suggestions = document.getElementById('light-day-suggestions');
+
+  // Skip if today is already meaningfully loaded.
+  if (todayTotalHours >= LIGHT_DAY_THRESHOLD) {
+    banner.classList.add('hidden');
+    return;
+  }
+
+  const flex = getFlexibleSuggestions(data.tasks);
+  if (flex.length === 0) {
+    banner.classList.add('hidden');
+    return;
+  }
+
+  const free = LIGHT_DAY_THRESHOLD - todayTotalHours;
+  header.textContent = `Light day — roughly ${formatHours(free)} of headroom. Pull something forward?`;
+  suggestions.innerHTML = '';
+
+  flex.forEach(task => {
+    const row = document.createElement('div');
+    row.className = 'light-day-suggestion';
+
+    const titleEl = document.createElement('span');
+    titleEl.textContent = task.title;
+    row.appendChild(titleEl);
+
+    const metaEl = document.createElement('span');
+    metaEl.className = 'light-day-suggestion-meta';
+    const parts = [];
+    if (task.estimated_hours) parts.push(formatHours(task.estimated_hours));
+    parts.push(`due ${formatDate(task.due_date)}`);
+    metaEl.textContent = parts.join(' · ');
+    row.appendChild(metaEl);
+
+    const pullBtn = document.createElement('button');
+    pullBtn.className = 'pull-btn';
+    pullBtn.textContent = 'Pull to today';
+    pullBtn.addEventListener('click', () => onPull(task.id));
+    row.appendChild(pullBtn);
+
+    suggestions.appendChild(row);
+  });
+
+  banner.classList.remove('hidden');
 }
 
 export function renderMoodTrend(reflections) {
@@ -243,20 +326,25 @@ export function renderMoodTrend(reflections) {
 }
 
 export function renderHistoryWeek(data, weekStart) {
+  const weekEnd = new Date(weekStart);
+  weekEnd.setDate(weekEnd.getDate() + 7);
+  const weekEndStr = weekEnd.toISOString().split('T')[0];
+
   const completed = data.completed.filter(t => {
     if (!t.completed_at) return false;
     const d = t.completed_at.split('T')[0];
-    const weekEnd = new Date(weekStart);
-    weekEnd.setDate(weekEnd.getDate() + 7);
-    return d >= weekStart && d < weekEnd.toISOString().split('T')[0] && !t.is_recurring;
+    return d >= weekStart && d < weekEndStr && !t.is_recurring;
   });
+
+  const recapsForWeek = (data.recaps || []).filter(r => r.date >= weekStart && r.date < weekEndStr);
 
   const container = document.getElementById('completed-list');
   const empty = document.getElementById('completed-empty');
   container.innerHTML = '';
 
-  empty.classList.toggle('hidden', completed.length > 0);
-  if (!completed.length) return;
+  const hasContent = completed.length > 0 || recapsForWeek.length > 0;
+  empty.classList.toggle('hidden', hasContent);
+  if (!hasContent) return;
 
   const byDate = {};
   completed.forEach(t => {
@@ -264,6 +352,12 @@ export function renderHistoryWeek(data, weekStart) {
     if (!byDate[d]) byDate[d] = [];
     byDate[d].push(t);
   });
+  // Ensure days with only a recap (no completed tasks) still show up.
+  recapsForWeek.forEach(r => {
+    if (!byDate[r.date]) byDate[r.date] = [];
+  });
+
+  const recapByDate = Object.fromEntries(recapsForWeek.map(r => [r.date, r]));
 
   Object.entries(byDate).sort().forEach(([date, tasks]) => {
     const dayEl = document.createElement('div');
@@ -274,6 +368,14 @@ export function renderHistoryWeek(data, weekStart) {
     label.className = 'completed-day-label';
     label.textContent = `${DAY_NAMES[d.getDay()]} · ${MONTH_NAMES[d.getMonth()]} ${d.getDate()}`;
     dayEl.appendChild(label);
+
+    const recap = recapByDate[date];
+    if (recap) {
+      const recapEl = document.createElement('div');
+      recapEl.className = 'recap-in-history';
+      recapEl.textContent = recap.text;
+      dayEl.appendChild(recapEl);
+    }
 
     tasks.forEach(task => {
       const card = document.createElement('div');

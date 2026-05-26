@@ -58,6 +58,8 @@
             <option value="low">Low</option>
           </select>
           <input id="opt-category" type="text" placeholder="Category" maxlength="30">
+          <label class="opt-checkbox" title="Critical — always shown in red"><input id="opt-critical" type="checkbox"> Critical</label>
+          <label class="opt-checkbox" title="Lock to this date — cannot be pulled forward"><input id="opt-lock" type="checkbox"> Lock</label>
           <button id="opt-save">Add</button>
         </div>
       </div>
@@ -65,6 +67,12 @@
       <!-- Loading / Error -->
       <div id="today-loading" class="status-msg">Loading tasks…</div>
       <div id="today-error" class="status-msg error hidden"></div>
+
+      <!-- Light Day Banner (rendered dynamically) -->
+      <div id="light-day-banner" class="light-day-banner hidden">
+        <div class="light-day-banner-header" id="light-day-header"></div>
+        <div class="light-day-suggestions" id="light-day-suggestions"></div>
+      </div>
 
       <!-- Today Zone -->
       <section class="zone zone-today">
@@ -93,6 +101,14 @@
           <span class="toggle-icon">▶</span>
         </button>
         <ul id="everything-else-list" class="task-list collapsed"></ul>
+      </section>
+
+      <!-- Daily Recap -->
+      <section class="zone zone-recap">
+        <h3>Wrap up today</h3>
+        <textarea id="recap-text" placeholder="What did you get done today?" rows="3"></textarea>
+        <button id="recap-save">Save recap</button>
+        <span id="recap-saved" class="hidden">Saved.</span>
       </section>
 
     </div><!-- /tab-today -->

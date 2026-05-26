@@ -18,7 +18,7 @@ async function persist() {
   _sha = await saveTasks(_data, _sha);
 }
 
-export async function addTask({ title, priority = 'medium', due_date = null, category = null, estimated_hours = null }) {
+export async function addTask({ title, priority = 'medium', due_date = null, category = null, estimated_hours = null, critical = false, lock_to_date = false }) {
   const task = {
     id: crypto.randomUUID(),
     title,
@@ -26,11 +26,40 @@ export async function addTask({ title, priority = 'medium', due_date = null, cat
     due_date,
     category,
     estimated_hours,
+    critical,
+    lock_to_date,
     created_at: new Date().toISOString()
   };
   _data.tasks.push(task);
   await persist();
   return task;
+}
+
+export async function toggleCritical(id) {
+  const task = _data.tasks.find(t => t.id === id);
+  if (!task) return;
+  task.critical = !task.critical;
+  await persist();
+}
+
+export async function pullTaskToToday(id) {
+  const task = _data.tasks.find(t => t.id === id);
+  if (!task) return;
+  task.due_date = new Date().toISOString().split('T')[0];
+  await persist();
+}
+
+export async function saveRecap(dateStr, text) {
+  if (!_data.recaps) _data.recaps = [];
+  const idx = _data.recaps.findIndex(r => r.date === dateStr);
+  const recap = { date: dateStr, text, created_at: new Date().toISOString() };
+  if (idx === -1) _data.recaps.push(recap);
+  else _data.recaps[idx] = recap;
+  await persist();
+}
+
+export function getRecap(dateStr) {
+  return (_data.recaps || []).find(r => r.date === dateStr) || null;
 }
 
 export async function completeTask(id) {

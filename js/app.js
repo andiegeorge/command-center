@@ -1,13 +1,15 @@
 import { getConfig, setConfig } from './api.js';
 import * as store from './store.js';
-import { wasMissed, getLastScheduledDate } from './recurring.js';
+import { wasMissed, getLastScheduledDate, isDueToday } from './recurring.js';
+import { getTodayHours } from './state.js';
 import {
   renderTodayZone,
   renderComingUpZone,
   renderEverythingElse,
   renderMoodTrend,
   renderHistoryWeek,
-  renderReflectionCard
+  renderReflectionCard,
+  renderLightDayBanner
 } from './render.js';
 
 // ── State ───────────────────────────────────────────────
@@ -46,11 +48,32 @@ function renderAll() {
     onDelete: async (id) => {
       await store.deleteTask(id);
       renderAll();
+    },
+    onToggleCritical: async (id) => {
+      await store.toggleCritical(id);
+      renderAll();
     }
   };
   renderTodayZone(data, handlers);
   renderComingUpZone(data, handlers);
   renderEverythingElse(data, handlers);
+
+  const todayHours = getTodayHours(data, isDueToday);
+  renderLightDayBanner(data, todayHours, {
+    onPull: async (id) => {
+      await store.pullTaskToToday(id);
+      renderAll();
+    }
+  });
+
+  loadRecapIntoForm();
+}
+
+function loadRecapIntoForm() {
+  const today = new Date().toISOString().split('T')[0];
+  const existing = store.getRecap(today);
+  document.getElementById('recap-text').value = existing?.text || '';
+  document.getElementById('recap-saved').classList.add('hidden');
 }
 
 function renderHistory() {
@@ -191,13 +214,17 @@ async function quickAdd() {
     priority: document.getElementById('opt-priority').value,
     due_date,
     category: document.getElementById('opt-category').value.trim() || null,
-    estimated_hours
+    estimated_hours,
+    critical: document.getElementById('opt-critical').checked,
+    lock_to_date: document.getElementById('opt-lock').checked
   });
   dumpInput.value = '';
   document.getElementById('opt-due').value = '';
   document.getElementById('opt-priority').value = 'medium';
   document.getElementById('opt-category').value = '';
   document.getElementById('opt-estimate').value = '';
+  document.getElementById('opt-critical').checked = false;
+  document.getElementById('opt-lock').checked = false;
   dumpOptions.classList.add('hidden');
   renderAll();
 }
@@ -205,6 +232,18 @@ async function quickAdd() {
 // EOW shortcut button — fill the date picker with upcoming Friday.
 document.getElementById('opt-eow').addEventListener('click', () => {
   document.getElementById('opt-due').value = nextFridayISO();
+});
+
+// Daily recap save
+document.getElementById('recap-save').addEventListener('click', async () => {
+  if (!appReady) return;
+  const text = document.getElementById('recap-text').value.trim();
+  if (!text) return;
+  const today = new Date().toISOString().split('T')[0];
+  await store.saveRecap(today, text);
+  const savedEl = document.getElementById('recap-saved');
+  savedEl.classList.remove('hidden');
+  setTimeout(() => savedEl.classList.add('hidden'), 2000);
 });
 
 // ── Everything Else Toggle ───────────────────────────────
