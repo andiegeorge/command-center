@@ -218,6 +218,7 @@ export function renderMoodTrend(reflections) {
 
 export function renderHistoryWeek(data, weekStart) {
   const completed = data.completed.filter(t => {
+    if (!t.completed_at) return false;
     const d = t.completed_at.split('T')[0];
     const weekEnd = new Date(weekStart);
     weekEnd.setDate(weekEnd.getDate() + 7);
@@ -251,14 +252,36 @@ export function renderHistoryWeek(data, weekStart) {
     tasks.forEach(task => {
       const card = document.createElement('div');
       card.className = 'completed-card';
-      card.innerHTML = `<span class="completed-check">✓</span>
-        <div class="task-body">
-          <span class="task-title">${task.title}</span>
-          <div class="task-meta">
-            ${task.category ? `<span class="task-category">${task.category}</span>` : ''}
-            <span>${task.priority}</span>
-          </div>
-        </div>`;
+
+      const check = document.createElement('span');
+      check.className = 'completed-check';
+      check.textContent = '✓';
+
+      const body = document.createElement('div');
+      body.className = 'task-body';
+
+      const titleEl = document.createElement('span');
+      titleEl.className = 'task-title';
+      titleEl.textContent = task.title;
+
+      const meta = document.createElement('div');
+      meta.className = 'task-meta';
+
+      if (task.category) {
+        const cat = document.createElement('span');
+        cat.className = 'task-category';
+        cat.textContent = task.category;
+        meta.appendChild(cat);
+      }
+
+      const priority = document.createElement('span');
+      priority.textContent = task.priority;
+      meta.appendChild(priority);
+
+      body.appendChild(titleEl);
+      body.appendChild(meta);
+      card.appendChild(check);
+      card.appendChild(body);
       dayEl.appendChild(card);
     });
 
