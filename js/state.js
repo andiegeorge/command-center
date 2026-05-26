@@ -1,5 +1,16 @@
 const PRIORITY_ORDER = { high: 0, medium: 1, low: 2 };
 
+export const DAILY_HOUR_THRESHOLD = 6;
+
+export function sumHours(tasks) {
+  return tasks.reduce((sum, t) => sum + (Number(t.estimated_hours) || 0), 0);
+}
+
+export function formatHours(h) {
+  if (!h) return '';
+  return Number.isInteger(h) ? `${h}h` : `${h.toFixed(2).replace(/\.?0+$/, '')}h`;
+}
+
 export function sortByPriority(tasks) {
   return [...tasks].sort((a, b) => PRIORITY_ORDER[a.priority] - PRIORITY_ORDER[b.priority]);
 }

@@ -1,4 +1,4 @@
-import { getTodayTasks, getComingUpTasks, getEverythingElse } from './state.js';
+import { getTodayTasks, getComingUpTasks, getEverythingElse, DAILY_HOUR_THRESHOLD, sumHours, formatHours } from './state.js';
 import { isDueToday, isDueWithinDays } from './recurring.js';
 
 const PRIORITY_ORDER = { high: 0, medium: 1, low: 2 };
@@ -55,6 +55,13 @@ export function makeTaskCard({ task, onComplete, onDelete, isOverdue = false, is
     meta.appendChild(due);
   }
 
+  if (task.estimated_hours) {
+    const est = document.createElement('span');
+    est.className = 'task-estimate';
+    est.textContent = formatHours(task.estimated_hours);
+    meta.appendChild(est);
+  }
+
   body.appendChild(title);
   if (meta.children.length) body.appendChild(meta);
 
@@ -98,7 +105,14 @@ export function renderTodayZone(data, { onComplete, onDelete }) {
     due_date: today
   }))];
 
-  count.textContent = allToday.length > 0 ? `${allToday.length} task${allToday.length > 1 ? 's' : ''}` : '';
+  const totalHours = sumHours(allToday);
+  const taskLabel = allToday.length > 0 ? `${allToday.length} task${allToday.length > 1 ? 's' : ''}` : '';
+  const hoursLabel = totalHours > 0 ? ` · ${formatHours(totalHours)}` : '';
+  count.textContent = taskLabel + hoursLabel;
+  count.classList.toggle('over-threshold', totalHours > DAILY_HOUR_THRESHOLD);
+  count.title = totalHours > DAILY_HOUR_THRESHOLD
+    ? `Over ${DAILY_HOUR_THRESHOLD}h — consider rescheduling something`
+    : '';
   empty.classList.toggle('hidden', allToday.length > 0);
 
   allToday.forEach(task => {
@@ -156,6 +170,18 @@ export function renderComingUpZone(data, { onComplete, onDelete }) {
     const label = document.createElement('div');
     label.className = 'coming-up-day-label';
     label.textContent = `${DAY_NAMES[d.getDay()]} · ${MONTH_NAMES[d.getMonth()]} ${d.getDate()}`;
+
+    const dayHours = sumHours(tasks);
+    if (dayHours > 0) {
+      const hoursEl = document.createElement('span');
+      hoursEl.className = 'coming-up-day-hours';
+      hoursEl.textContent = formatHours(dayHours);
+      if (dayHours > DAILY_HOUR_THRESHOLD) {
+        hoursEl.classList.add('over-threshold');
+        hoursEl.title = `Over ${DAILY_HOUR_THRESHOLD}h — consider rescheduling`;
+      }
+      label.appendChild(hoursEl);
+    }
     dayEl.appendChild(label);
 
     const ul = document.createElement('ul');

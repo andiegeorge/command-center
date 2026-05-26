@@ -150,22 +150,62 @@ document.getElementById('opt-save').addEventListener('click', async () => {
   if (dumpInput.value.trim()) await quickAdd();
 });
 
+function todayISO() {
+  return new Date().toISOString().split('T')[0];
+}
+
+function nextFridayISO() {
+  const d = new Date();
+  const day = d.getDay(); // 0=Sun..6=Sat
+  // If today is Fri, use today; else advance to upcoming Fri (5).
+  const diff = (5 - day + 7) % 7;
+  d.setDate(d.getDate() + diff);
+  return d.toISOString().split('T')[0];
+}
+
+function tomorrowISO() {
+  const d = new Date();
+  d.setDate(d.getDate() + 1);
+  return d.toISOString().split('T')[0];
+}
+
+// Parse natural-language deadline keywords in a task title.
+// Returns the resolved YYYY-MM-DD if a keyword is found, otherwise null.
+function resolveTitleKeyword(title) {
+  const t = title.toLowerCase();
+  if (/\beow\b/.test(t)) return nextFridayISO();
+  if (/\beod\b/.test(t)) return todayISO();
+  if (/\btomorrow\b/.test(t)) return tomorrowISO();
+  return null;
+}
+
 async function quickAdd() {
   const title = dumpInput.value.trim();
   if (!title) return;
+  const explicitDue = document.getElementById('opt-due').value;
+  const due_date = explicitDue || resolveTitleKeyword(title) || null;
+  const estimateRaw = document.getElementById('opt-estimate').value;
+  const estimated_hours = estimateRaw ? parseFloat(estimateRaw) : null;
   await store.addTask({
     title,
     priority: document.getElementById('opt-priority').value,
-    due_date: document.getElementById('opt-due').value || null,
-    category: document.getElementById('opt-category').value.trim() || null
+    due_date,
+    category: document.getElementById('opt-category').value.trim() || null,
+    estimated_hours
   });
   dumpInput.value = '';
   document.getElementById('opt-due').value = '';
   document.getElementById('opt-priority').value = 'medium';
   document.getElementById('opt-category').value = '';
+  document.getElementById('opt-estimate').value = '';
   dumpOptions.classList.add('hidden');
   renderAll();
 }
+
+// EOW shortcut button — fill the date picker with upcoming Friday.
+document.getElementById('opt-eow').addEventListener('click', () => {
+  document.getElementById('opt-due').value = nextFridayISO();
+});
 
 // ── Everything Else Toggle ───────────────────────────────
 document.getElementById('everything-else-toggle').addEventListener('click', () => {

@@ -101,6 +101,7 @@ body {
 }
 
 .dump-options input[type="date"],
+.dump-options input[type="number"],
 .dump-options select,
 .dump-options input[type="text"] {
   background: var(--surface-2);
@@ -113,7 +114,24 @@ body {
   outline: none;
 }
 
+.dump-options input[type="number"] { width: 70px; }
+
 .dump-options input[type="date"]::-webkit-calendar-picker-indicator { filter: invert(0.7); }
+
+.opt-shortcut {
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  color: var(--text-muted);
+  font-family: var(--font);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  padding: 6px 10px;
+  cursor: pointer;
+  transition: color 0.15s, border-color 0.15s;
+}
+.opt-shortcut:hover { color: var(--text); border-color: var(--accent); }
 
 #opt-save {
   background: var(--accent);
@@ -153,6 +171,11 @@ body {
   color: var(--text-muted);
   padding: 2px 8px;
   border-radius: 10px;
+  transition: background 0.15s, color 0.15s;
+}
+.zone-count.over-threshold {
+  background: rgba(224, 82, 82, 0.18);
+  color: var(--priority-high);
 }
 
 .zone-today {
@@ -223,6 +246,13 @@ body {
   border-radius: 10px;
 }
 
+.task-estimate {
+  background: var(--surface-2);
+  padding: 1px 7px;
+  border-radius: 10px;
+  font-variant-numeric: tabular-nums;
+}
+
 .delete-btn {
   background: none;
   border: none;
@@ -255,6 +285,25 @@ body {
   letter-spacing: 0.06em;
   color: var(--text-muted);
   margin-bottom: 6px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.coming-up-day-hours {
+  font-weight: 500;
+  font-size: 11px;
+  background: var(--surface-2);
+  color: var(--text-muted);
+  padding: 1px 7px;
+  border-radius: 10px;
+  text-transform: none;
+  letter-spacing: 0;
+  font-variant-numeric: tabular-nums;
+}
+.coming-up-day-hours.over-threshold {
+  background: rgba(224, 82, 82, 0.18);
+  color: var(--priority-high);
 }
 
 /* ── Everything Else ─────────────────────────── */

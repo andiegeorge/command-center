@@ -18,13 +18,14 @@ async function persist() {
   _sha = await saveTasks(_data, _sha);
 }
 
-export async function addTask({ title, priority = 'medium', due_date = null, category = null }) {
+export async function addTask({ title, priority = 'medium', due_date = null, category = null, estimated_hours = null }) {
   const task = {
     id: crypto.randomUUID(),
     title,
     priority,
     due_date,
     category,
+    estimated_hours,
     created_at: new Date().toISOString()
   };
   _data.tasks.push(task);
