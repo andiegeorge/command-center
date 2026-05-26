@@ -86,3 +86,27 @@ test('getNextDueDate returns a future date', () => {
   expect(next).toBeInstanceOf(Date);
   expect(next > new Date()).toBe(true);
 });
+
+test('wasMissed returns true when last_completed_at is null and last scheduled is in the past', () => {
+  // Task due every Monday, never completed
+  const rec = makeRecurring({
+    last_completed_at: null,
+    missed_count: 0,
+    recurrence: { frequency: 'weekly', day_of_week: 'monday', due_time: '00:01', timezone: 'America/Denver' }
+  });
+  // getLastScheduledDate for monday will be in the past (at most 6 days ago)
+  // never completed → wasMissed should be true
+  expect(wasMissed(rec)).toBe(true);
+});
+
+test('wasMissed returns false when completed after last scheduled date', () => {
+  const todayIdx = new Date().getDay();
+  const todayName = DAY_NAMES[todayIdx];
+  // Completed 1 minute ago, task due today at 00:01 — completion is after scheduled
+  const justNow = new Date();
+  const rec = makeRecurring({
+    last_completed_at: justNow.toISOString(),
+    recurrence: { frequency: 'weekly', day_of_week: todayName, due_time: '00:01', timezone: 'America/Denver' }
+  });
+  expect(wasMissed(rec)).toBe(false);
+});

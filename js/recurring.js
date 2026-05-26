@@ -23,10 +23,17 @@ export function getLastScheduledDate(recurring) {
 
   if (frequency === 'daily') {
     const result = new Date(now);
-    result.setDate(now.getDate() - 1);
     if (due_time) {
       const [h, m] = due_time.split(':').map(Number);
       result.setHours(h, m, 0, 0);
+      if (result > now) {
+        // due time hasn't passed yet today — last scheduled was yesterday
+        result.setDate(result.getDate() - 1);
+      }
+    } else {
+      // No specific time — use end of yesterday
+      result.setDate(now.getDate() - 1);
+      result.setHours(23, 59, 0, 0);
     }
     return result;
   }
@@ -89,8 +96,10 @@ export function isDueWithinDays(recurring, days) {
   if (frequency === 'weekly') {
     const targetDay = DAY_INDEX[day_of_week];
     const daysUntil = (targetDay - new Date().getDay() + 7) % 7;
-    return daysUntil > 0 && daysUntil < days;
+    return daysUntil > 0 && daysUntil <= days;
   }
-  if (frequency === 'daily') return true;
+  if (frequency === 'daily') {
+    return 1 > 0 && 1 <= days; // daily is always 1 day away
+  }
   return false;
 }
