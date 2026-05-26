@@ -1,0 +1,240 @@
+import { getConfig, setConfig } from './api.js';
+import * as store from './store.js';
+import { wasMissed, getLastScheduledDate } from './recurring.js';
+import {
+  renderTodayZone,
+  renderComingUpZone,
+  renderEverythingElse,
+  renderMoodTrend,
+  renderHistoryWeek,
+  renderReflectionCard
+} from './render.js';
+
+// ── State ───────────────────────────────────────────────
+let currentWeekStart = getMondayStr(new Date());
+let selectedMood = null;
+
+function getMondayStr(date) {
+  const d = new Date(date);
+  const day = d.getDay();
+  const diff = day === 0 ? -6 : 1 - day;
+  d.setDate(d.getDate() + diff);
+  return d.toISOString().split('T')[0];
+}
+
+function formatWeekLabel(weekStart) {
+  const start = new Date(weekStart + 'T00:00:00');
+  const end = new Date(weekStart + 'T00:00:00');
+  end.setDate(end.getDate() + 6);
+  const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  return `${months[start.getMonth()]} ${start.getDate()} – ${months[end.getMonth()]} ${end.getDate()}, ${end.getFullYear()}`;
+}
+
+// ── Rendering ───────────────────────────────────────────
+function renderAll() {
+  const data = store.getData();
+  const handlers = {
+    onComplete: async (id, isRecurring = false) => {
+      if (isRecurring) {
+        await store.completeRecurring(id);
+      } else {
+        await store.completeTask(id);
+      }
+      renderAll();
+    },
+    onDelete: async (id) => {
+      await store.deleteTask(id);
+      renderAll();
+    }
+  };
+  renderTodayZone(data, handlers);
+  renderComingUpZone(data, handlers);
+  renderEverythingElse(data, handlers);
+}
+
+function renderHistory() {
+  const data = store.getData();
+  document.getElementById('week-label').textContent = formatWeekLabel(currentWeekStart);
+  renderHistoryWeek(data, currentWeekStart);
+  renderReflectionCard(store.getReflection(currentWeekStart));
+  renderMoodTrend(data.reflections);
+
+  // Restore selected mood from saved reflection
+  const reflection = store.getReflection(currentWeekStart);
+  selectedMood = reflection?.mood || null;
+  document.querySelectorAll('.mood-btn').forEach(btn => {
+    btn.classList.toggle('selected', btn.dataset.mood === selectedMood);
+  });
+}
+
+// ── Init ────────────────────────────────────────────────
+async function init() {
+  if (!getConfig()) {
+    document.getElementById('setup-modal').classList.remove('hidden');
+    return;
+  }
+
+  document.getElementById('today-loading').classList.remove('hidden');
+  document.getElementById('today-error').classList.add('hidden');
+
+  try {
+    await store.load();
+  } catch (err) {
+    document.getElementById('today-loading').classList.add('hidden');
+    const errEl = document.getElementById('today-error');
+    errEl.textContent = `Failed to load tasks: ${err.message}`;
+    errEl.classList.remove('hidden');
+    return;
+  }
+
+  document.getElementById('today-loading').classList.add('hidden');
+  document.getElementById('app').classList.remove('hidden');
+
+  // Check recurring missed counts on load
+  await checkRecurringMisses();
+
+  renderAll();
+  renderHistory();
+}
+
+async function checkRecurringMisses() {
+  const data = store.getData();
+  for (const rec of (data.recurring || [])) {
+    if (!wasMissed(rec)) continue;
+    const lastScheduled = getLastScheduledDate(rec);
+    if (!lastScheduled) continue;
+    const lastScheduledStr = lastScheduled.toISOString().split('T')[0];
+    // Only increment if we haven't already recorded this specific missed window
+    if (rec.last_missed_at === lastScheduledStr) continue;
+    await store.incrementMissedCount(rec.id, lastScheduledStr);
+  }
+}
+
+// ── Tab Switching ────────────────────────────────────────
+document.querySelectorAll('.tab').forEach(tab => {
+  tab.addEventListener('click', () => {
+    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+    tab.classList.add('active');
+    const target = tab.dataset.tab;
+    document.getElementById('tab-today').classList.toggle('hidden', target !== 'today');
+    document.getElementById('tab-history').classList.toggle('hidden', target !== 'history');
+    if (target === 'history') renderHistory();
+  });
+});
+
+// ── Brain Dump Bar ───────────────────────────────────────
+const dumpInput = document.getElementById('brain-dump-input');
+const dumpOptions = document.getElementById('brain-dump-options');
+
+dumpInput.addEventListener('input', () => {
+  dumpOptions.classList.toggle('hidden', dumpInput.value.trim() === '');
+});
+
+dumpInput.addEventListener('keydown', async (e) => {
+  if (e.key === 'Enter' && dumpInput.value.trim()) {
+    await quickAdd();
+  }
+  if (e.key === 'Escape') {
+    dumpInput.value = '';
+    dumpOptions.classList.add('hidden');
+  }
+});
+
+document.getElementById('opt-save').addEventListener('click', async () => {
+  if (dumpInput.value.trim()) await quickAdd();
+});
+
+async function quickAdd() {
+  const title = dumpInput.value.trim();
+  if (!title) return;
+  await store.addTask({
+    title,
+    priority: document.getElementById('opt-priority').value,
+    due_date: document.getElementById('opt-due').value || null,
+    category: document.getElementById('opt-category').value.trim() || null
+  });
+  dumpInput.value = '';
+  document.getElementById('opt-due').value = '';
+  document.getElementById('opt-priority').value = 'medium';
+  document.getElementById('opt-category').value = '';
+  dumpOptions.classList.add('hidden');
+  renderAll();
+}
+
+// ── Everything Else Toggle ───────────────────────────────
+document.getElementById('everything-else-toggle').addEventListener('click', () => {
+  const list = document.getElementById('everything-else-list');
+  const icon = document.querySelector('#everything-else-toggle .toggle-icon');
+  list.classList.toggle('collapsed');
+  icon.classList.toggle('open', !list.classList.contains('collapsed'));
+});
+
+// ── History Week Navigation ──────────────────────────────
+document.getElementById('week-prev').addEventListener('click', () => {
+  const d = new Date(currentWeekStart + 'T00:00:00');
+  d.setDate(d.getDate() - 7);
+  currentWeekStart = d.toISOString().split('T')[0];
+  renderHistory();
+});
+
+document.getElementById('week-next').addEventListener('click', () => {
+  const d = new Date(currentWeekStart + 'T00:00:00');
+  d.setDate(d.getDate() + 7);
+  currentWeekStart = d.toISOString().split('T')[0];
+  renderHistory();
+});
+
+// ── Mood Selector ────────────────────────────────────────
+document.getElementById('mood-selector').addEventListener('click', (e) => {
+  const btn = e.target.closest('.mood-btn');
+  if (!btn) return;
+  selectedMood = btn.dataset.mood;
+  document.querySelectorAll('.mood-btn').forEach(b => b.classList.toggle('selected', b === btn));
+});
+
+// ── Reflection Save ──────────────────────────────────────
+document.getElementById('reflection-save').addEventListener('click', async () => {
+  const text = document.getElementById('reflection-text').value.trim();
+  if (!selectedMood && !text) return;
+  await store.saveReflection({ week_start: currentWeekStart, text, mood: selectedMood });
+  const savedEl = document.getElementById('reflection-saved');
+  savedEl.classList.remove('hidden');
+  setTimeout(() => savedEl.classList.add('hidden'), 2000);
+  renderMoodTrend(store.getData().reflections);
+});
+
+// ── Setup Modal ──────────────────────────────────────────
+document.getElementById('setup-save').addEventListener('click', async () => {
+  const owner = document.getElementById('setup-owner').value.trim();
+  const repo = document.getElementById('setup-repo').value.trim();
+  const token = document.getElementById('setup-token').value.trim();
+  const errEl = document.getElementById('setup-error');
+
+  if (!owner || !repo || !token) {
+    errEl.textContent = 'All fields are required.';
+    errEl.classList.remove('hidden');
+    return;
+  }
+
+  setConfig(owner, repo, token);
+
+  try {
+    await store.load();
+    document.getElementById('setup-modal').classList.add('hidden');
+    document.getElementById('app').classList.remove('hidden');
+    await checkRecurringMisses();
+    renderAll();
+    renderHistory();
+  } catch (err) {
+    errEl.textContent = `Could not connect: ${err.message}. Check your credentials.`;
+    errEl.classList.remove('hidden');
+  }
+});
+
+// ── Settings (re-open setup modal) ──────────────────────
+document.getElementById('settings-btn').addEventListener('click', () => {
+  document.getElementById('setup-modal').classList.remove('hidden');
+});
+
+// ── Boot ─────────────────────────────────────────────────
+init();
