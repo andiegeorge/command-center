@@ -11,6 +11,7 @@ import {
 } from './render.js';
 
 // ── State ───────────────────────────────────────────────
+let appReady = false;
 let currentWeekStart = getMondayStr(new Date());
 let selectedMood = null;
 
@@ -93,6 +94,7 @@ async function init() {
   // Check recurring missed counts on load
   await checkRecurringMisses();
 
+  appReady = true;
   renderAll();
   renderHistory();
 }
@@ -113,6 +115,7 @@ async function checkRecurringMisses() {
 // ── Tab Switching ────────────────────────────────────────
 document.querySelectorAll('.tab').forEach(tab => {
   tab.addEventListener('click', () => {
+    if (!appReady) return;
     document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
     tab.classList.add('active');
     const target = tab.dataset.tab;
@@ -127,10 +130,12 @@ const dumpInput = document.getElementById('brain-dump-input');
 const dumpOptions = document.getElementById('brain-dump-options');
 
 dumpInput.addEventListener('input', () => {
+  if (!appReady) return;
   dumpOptions.classList.toggle('hidden', dumpInput.value.trim() === '');
 });
 
 dumpInput.addEventListener('keydown', async (e) => {
+  if (!appReady) return;
   if (e.key === 'Enter' && dumpInput.value.trim()) {
     await quickAdd();
   }
@@ -141,6 +146,7 @@ dumpInput.addEventListener('keydown', async (e) => {
 });
 
 document.getElementById('opt-save').addEventListener('click', async () => {
+  if (!appReady) return;
   if (dumpInput.value.trim()) await quickAdd();
 });
 
@@ -163,6 +169,7 @@ async function quickAdd() {
 
 // ── Everything Else Toggle ───────────────────────────────
 document.getElementById('everything-else-toggle').addEventListener('click', () => {
+  if (!appReady) return;
   const list = document.getElementById('everything-else-list');
   const icon = document.querySelector('#everything-else-toggle .toggle-icon');
   list.classList.toggle('collapsed');
@@ -171,6 +178,7 @@ document.getElementById('everything-else-toggle').addEventListener('click', () =
 
 // ── History Week Navigation ──────────────────────────────
 document.getElementById('week-prev').addEventListener('click', () => {
+  if (!appReady) return;
   const d = new Date(currentWeekStart + 'T00:00:00');
   d.setDate(d.getDate() - 7);
   currentWeekStart = d.toISOString().split('T')[0];
@@ -178,6 +186,7 @@ document.getElementById('week-prev').addEventListener('click', () => {
 });
 
 document.getElementById('week-next').addEventListener('click', () => {
+  if (!appReady) return;
   const d = new Date(currentWeekStart + 'T00:00:00');
   d.setDate(d.getDate() + 7);
   currentWeekStart = d.toISOString().split('T')[0];
@@ -186,6 +195,7 @@ document.getElementById('week-next').addEventListener('click', () => {
 
 // ── Mood Selector ────────────────────────────────────────
 document.getElementById('mood-selector').addEventListener('click', (e) => {
+  if (!appReady) return;
   const btn = e.target.closest('.mood-btn');
   if (!btn) return;
   selectedMood = btn.dataset.mood;
@@ -194,6 +204,7 @@ document.getElementById('mood-selector').addEventListener('click', (e) => {
 
 // ── Reflection Save ──────────────────────────────────────
 document.getElementById('reflection-save').addEventListener('click', async () => {
+  if (!appReady) return;
   const text = document.getElementById('reflection-text').value.trim();
   if (!selectedMood && !text) return;
   await store.saveReflection({ week_start: currentWeekStart, text, mood: selectedMood });
@@ -218,14 +229,18 @@ document.getElementById('setup-save').addEventListener('click', async () => {
 
   setConfig(owner, repo, token);
 
+  document.getElementById('today-loading').classList.remove('hidden');
   try {
     await store.load();
+    document.getElementById('today-loading').classList.add('hidden');
     document.getElementById('setup-modal').classList.add('hidden');
     document.getElementById('app').classList.remove('hidden');
     await checkRecurringMisses();
+    appReady = true;
     renderAll();
     renderHistory();
   } catch (err) {
+    document.getElementById('today-loading').classList.add('hidden');
     errEl.textContent = `Could not connect: ${err.message}. Check your credentials.`;
     errEl.classList.remove('hidden');
   }
