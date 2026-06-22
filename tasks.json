@@ -112,8 +112,8 @@
       "title": "Prep 1:1 notes for Annie",
       "priority": "high",
       "category": "1:1s",
-      "missed_count": 2,
-      "last_completed_at": null,
+      "missed_count": 0,
+      "last_completed_at": "2026-06-22T22:28:13.519Z",
       "last_missed_at": "2026-06-22",
       "recurrence": {
         "frequency": "weekly",
