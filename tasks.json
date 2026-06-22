@@ -10,15 +10,6 @@
       "created_at": "2026-05-26T12:00:00.000Z"
     },
     {
-      "id": "654423f8-7d59-4de1-a71f-4496b413ebf6",
-      "title": "Snowflake talk: speaker notes & cues",
-      "priority": "high",
-      "due_date": "2026-05-27",
-      "category": "Snowflake",
-      "estimated_hours": 1.5,
-      "created_at": "2026-05-26T12:00:00.000Z"
-    },
-    {
       "id": "2fabe38d-349b-4b56-b3d6-18396be40b75",
       "title": "Slide wizard v.next",
       "priority": "high",
@@ -89,6 +80,17 @@
       "created_at": "2026-05-26T12:00:00.000Z",
       "critical": true,
       "completed_at": "2026-06-22T22:27:57.483Z",
+      "is_recurring": false
+    },
+    {
+      "id": "654423f8-7d59-4de1-a71f-4496b413ebf6",
+      "title": "Snowflake talk: speaker notes & cues",
+      "priority": "high",
+      "due_date": "2026-05-27",
+      "category": "Snowflake",
+      "estimated_hours": 1.5,
+      "created_at": "2026-05-26T12:00:00.000Z",
+      "completed_at": "2026-06-22T22:27:59.434Z",
       "is_recurring": false
     }
   ],
