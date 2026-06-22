@@ -19,16 +19,6 @@
       "created_at": "2026-05-26T12:00:00.000Z"
     },
     {
-      "id": "aa7ab226-2ae5-4e97-b055-172c9e2c6a94",
-      "title": "Practice Snowflake talk",
-      "priority": "high",
-      "lock_to_date": true,
-      "due_date": "2026-05-29",
-      "category": "Snowflake",
-      "estimated_hours": 0.5,
-      "created_at": "2026-05-26T12:00:00.000Z"
-    },
-    {
       "id": "73313220-769d-4c46-a77c-739a0855b06d",
       "title": "Practice Snowflake talk",
       "priority": "high",
@@ -95,6 +85,18 @@
       "estimated_hours": 0.5,
       "created_at": "2026-05-26T12:00:00.000Z",
       "completed_at": "2026-06-22T22:28:05.178Z",
+      "is_recurring": false
+    },
+    {
+      "id": "aa7ab226-2ae5-4e97-b055-172c9e2c6a94",
+      "title": "Practice Snowflake talk",
+      "priority": "high",
+      "lock_to_date": true,
+      "due_date": "2026-05-29",
+      "category": "Snowflake",
+      "estimated_hours": 0.5,
+      "created_at": "2026-05-26T12:00:00.000Z",
+      "completed_at": "2026-06-22T22:28:06.919Z",
       "is_recurring": false
     }
   ],
