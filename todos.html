@@ -17,10 +17,7 @@
       padding: 60px 20px;
     }
 
-    .container {
-      width: 100%;
-      max-width: 560px;
-    }
+    .container { width: 100%; max-width: 560px; }
 
     h1 {
       font-size: 1.4rem;
@@ -52,6 +49,21 @@
     input[type="text"]::placeholder { color: #555; }
     input[type="text"]:focus { border-color: #555; }
 
+    input[type="date"] {
+      width: 100%;
+      background: #1a1a1a;
+      border: 1px solid #2e2e2e;
+      border-radius: 6px;
+      color: #e8e8e8;
+      font-size: 0.85rem;
+      padding: 7px 10px;
+      outline: none;
+      color-scheme: dark;
+      transition: border-color 0.15s;
+    }
+
+    input[type="date"]:focus { border-color: #555; }
+
     button.add-btn {
       background: #e8e8e8;
       color: #0f0f0f;
@@ -67,27 +79,25 @@
 
     button.add-btn:hover { background: #fff; }
 
-    .section-label {
-      font-size: 0.7rem;
-      letter-spacing: 0.1em;
-      text-transform: uppercase;
-      color: #444;
-      margin-bottom: 10px;
-    }
+    ul { list-style: none; }
 
-    ul {
-      list-style: none;
-    }
-
-    li {
+    li.todo-item {
       display: flex;
       align-items: center;
+      flex-wrap: wrap;
       gap: 12px;
       padding: 11px 0;
       border-bottom: 1px solid #1e1e1e;
     }
 
-    li:last-child { border-bottom: none; }
+    li.todo-item:last-child { border-bottom: none; }
+
+    .item-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      width: 100%;
+    }
 
     .checkbox {
       width: 18px;
@@ -104,32 +114,27 @@
 
     .checkbox:hover { border-color: #888; }
 
-    .checkbox.checked {
-      background: #3a3a3a;
-      border-color: #3a3a3a;
-    }
-
-    .checkbox.checked::after {
-      content: '';
-      width: 5px;
-      height: 9px;
-      border: 1.5px solid #aaa;
-      border-top: none;
-      border-left: none;
-      transform: rotate(45deg) translateY(-1px);
-    }
-
     .todo-text {
       flex: 1;
       font-size: 0.95rem;
       line-height: 1.4;
-      cursor: default;
     }
 
-    .todo-text.done {
+    .recurring-icon {
+      font-size: 0.8rem;
       color: #444;
-      text-decoration: line-through;
+      flex-shrink: 0;
     }
+
+    .tag {
+      font-size: 0.73rem;
+      padding: 2px 7px;
+      border-radius: 4px;
+      flex-shrink: 0;
+    }
+
+    .tag-due    { background: #3a1a0a; color: #e8854a; }
+    .tag-soon   { background: #1a1a2a; color: #7a7aaa; }
 
     .delete-btn {
       background: none;
@@ -143,15 +148,147 @@
       flex-shrink: 0;
     }
 
-    li:hover .delete-btn { color: #666; }
+    .item-row:hover .delete-btn { color: #666; }
     .delete-btn:hover { color: #e55 !important; }
 
-    .completed-section { margin-top: 28px; }
+    /* Inline completion form */
+    .complete-form {
+      width: 100%;
+      background: #161616;
+      border: 1px solid #2a2a2a;
+      border-radius: 8px;
+      padding: 14px;
+      display: none;
+    }
+
+    .complete-form.open { display: block; }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 10px;
+      margin-bottom: 12px;
+    }
+
+    .form-field label {
+      display: block;
+      font-size: 0.68rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: #555;
+      margin-bottom: 5px;
+    }
+
+    .form-actions {
+      display: flex;
+      gap: 8px;
+      justify-content: flex-end;
+    }
+
+    button.save-btn {
+      background: #e8e8e8;
+      color: #0f0f0f;
+      border: none;
+      border-radius: 6px;
+      font-size: 0.85rem;
+      font-weight: 500;
+      padding: 7px 14px;
+      cursor: pointer;
+    }
+
+    button.save-btn:hover { background: #fff; }
+
+    button.cancel-btn {
+      background: none;
+      border: 1px solid #2e2e2e;
+      color: #777;
+      border-radius: 6px;
+      font-size: 0.85rem;
+      padding: 7px 14px;
+      cursor: pointer;
+    }
+
+    button.cancel-btn:hover { border-color: #555; color: #aaa; }
+
+    /* Recurring section */
+    .section-divider {
+      border: none;
+      border-top: 1px solid #1e1e1e;
+      margin: 36px 0 24px;
+    }
+
+    .section-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 14px;
+    }
+
+    .section-label {
+      font-size: 0.7rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: #444;
+    }
+
+    button.icon-btn {
+      background: none;
+      border: 1px solid #2e2e2e;
+      color: #666;
+      border-radius: 6px;
+      font-size: 0.82rem;
+      padding: 3px 10px;
+      cursor: pointer;
+      transition: border-color 0.15s, color 0.15s;
+    }
+
+    button.icon-btn:hover { border-color: #555; color: #aaa; }
+
+    .add-recurring-form {
+      background: #161616;
+      border: 1px solid #2a2a2a;
+      border-radius: 8px;
+      padding: 14px;
+      margin-bottom: 16px;
+      display: none;
+    }
+
+    .add-recurring-form.open { display: block; }
+    .add-recurring-form .input-row { margin-bottom: 10px; }
+    .add-recurring-form .form-grid { grid-template-columns: 1fr 1fr; }
+
+    li.template-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 10px 0;
+      border-bottom: 1px solid #1e1e1e;
+    }
+
+    li.template-item:last-child { border-bottom: none; }
+
+    .template-text {
+      flex: 1;
+      font-size: 0.92rem;
+      color: #ccc;
+    }
+
+    .template-meta {
+      font-size: 0.75rem;
+      color: #555;
+      text-align: right;
+      flex-shrink: 0;
+      white-space: nowrap;
+    }
+
+    .template-meta .m-active { color: #5a8a5a; }
+    .template-meta .m-due    { color: #e8854a; }
 
     .empty {
       color: #333;
       font-size: 0.9rem;
-      padding: 12px 0;
+      padding: 10px 0;
+      display: block;
     }
   </style>
 </head>
@@ -164,101 +301,313 @@
       <button class="add-btn" onclick="addTodo()">Add</button>
     </div>
 
-    <div id="active-section">
-      <ul id="active-list"></ul>
+    <ul id="active-list"></ul>
+
+    <hr class="section-divider" />
+
+    <div class="section-header">
+      <span class="section-label">Recurring</span>
+      <button class="icon-btn" onclick="toggleAddRecurring()">+ Add</button>
     </div>
 
-    <div class="completed-section" id="completed-section" style="display:none">
-      <div class="section-label">Completed</div>
-      <ul id="completed-list"></ul>
+    <div class="add-recurring-form" id="add-recurring-form">
+      <div class="input-row">
+        <input type="text" id="new-rec-text" placeholder="Task name…" autocomplete="off" />
+      </div>
+      <div class="form-grid">
+        <div class="form-field">
+          <label>Snooze until</label>
+          <input type="date" id="new-rec-snooze" />
+        </div>
+        <div class="form-field">
+          <label>Must do by</label>
+          <input type="date" id="new-rec-mustdo" />
+        </div>
+      </div>
+      <div class="form-actions">
+        <button class="cancel-btn" onclick="toggleAddRecurring()">Cancel</button>
+        <button class="save-btn" onclick="addRecurring()">Add</button>
+      </div>
     </div>
+
+    <ul id="recurring-list"></ul>
   </div>
 
   <script>
-    const STORAGE_KEY = 'andie-todos';
+    const KEY = 'andie-todos-v2';
 
     function load() {
-      try { return JSON.parse(localStorage.getItem(STORAGE_KEY)) || []; }
-      catch { return []; }
+      try {
+        const d = JSON.parse(localStorage.getItem(KEY));
+        return (d && Array.isArray(d.todos)) ? d : { todos: [], recurring: [] };
+      } catch { return { todos: [], recurring: [] }; }
     }
 
-    function save(todos) {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(todos));
+    function save(data) { localStorage.setItem(KEY, JSON.stringify(data)); }
+
+    function today() { return new Date().toISOString().slice(0, 10); }
+
+    function addDays(n, from) {
+      const d = new Date((from || today()) + 'T00:00:00');
+      d.setDate(d.getDate() + n);
+      return d.toISOString().slice(0, 10);
     }
+
+    function fmt(s) {
+      if (!s) return '';
+      return new Date(s + 'T00:00:00').toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+    }
+
+    function isActive(r)  { return !r.snoozeUntil || r.snoozeUntil <= today(); }
+    function isDue(r)     { return r.mustDoBy && r.mustDoBy <= today(); }
+    function isUpcoming(r){ return r.mustDoBy && r.mustDoBy > today() && addDays(3) >= r.mustDoBy; }
+
+    // ── Render ──────────────────────────────────────────────
 
     function render() {
-      const todos = load();
-      const active = todos.filter(t => !t.done);
-      const done = todos.filter(t => t.done);
-
-      const activeList = document.getElementById('active-list');
-      const completedList = document.getElementById('completed-list');
-      const completedSection = document.getElementById('completed-section');
-
-      activeList.innerHTML = '';
-      completedList.innerHTML = '';
-
-      if (active.length === 0) {
-        activeList.innerHTML = '<li><span class="empty">Nothing here yet.</span></li>';
-      } else {
-        active.forEach(t => activeList.appendChild(makeItem(t)));
-      }
-
-      if (done.length > 0) {
-        completedSection.style.display = '';
-        done.forEach(t => completedList.appendChild(makeItem(t)));
-      } else {
-        completedSection.style.display = 'none';
-      }
+      renderActiveList();
+      renderRecurringList();
     }
 
-    function makeItem(todo) {
+    function renderActiveList() {
+      const { todos, recurring } = load();
+      const list = document.getElementById('active-list');
+      list.innerHTML = '';
+
+      const activeTodos = todos.filter(t => !t.done);
+      const activeRec   = recurring.filter(isActive);
+
+      if (!activeTodos.length && !activeRec.length) {
+        list.innerHTML = '<li class="todo-item"><span class="empty">Nothing here yet.</span></li>';
+        return;
+      }
+
+      activeTodos.forEach(t => list.appendChild(makeTodoItem(t)));
+      activeRec.forEach(r  => list.appendChild(makeRecurringItem(r)));
+    }
+
+    function renderRecurringList() {
+      const { recurring } = load();
+      const list = document.getElementById('recurring-list');
+      list.innerHTML = '';
+
+      if (!recurring.length) {
+        list.innerHTML = '<li class="template-item"><span class="empty">No recurring tasks yet.</span></li>';
+        return;
+      }
+
+      recurring.forEach(r => list.appendChild(makeTemplateItem(r)));
+    }
+
+    // ── Item builders ────────────────────────────────────────
+
+    function makeTodoItem(todo) {
       const li = document.createElement('li');
+      li.className = 'todo-item';
 
-      const box = document.createElement('div');
-      box.className = 'checkbox' + (todo.done ? ' checked' : '');
-      box.onclick = () => toggle(todo.id);
+      const row = document.createElement('div');
+      row.className = 'item-row';
 
-      const text = document.createElement('span');
-      text.className = 'todo-text' + (todo.done ? ' done' : '');
+      const box = el('div', 'checkbox');
+      box.onclick = () => removeTodo(todo.id);
+
+      const text = el('span', 'todo-text');
       text.textContent = todo.text;
 
-      const del = document.createElement('button');
-      del.className = 'delete-btn';
-      del.textContent = '×';
-      del.title = 'Delete';
-      del.onclick = () => remove(todo.id);
+      const del = deleteBtn(() => removeTodo(todo.id));
 
-      li.append(box, text, del);
+      row.append(box, text, del);
+      li.append(row);
       return li;
     }
+
+    function makeRecurringItem(r) {
+      const li = document.createElement('li');
+      li.className = 'todo-item';
+
+      const row = document.createElement('div');
+      row.className = 'item-row';
+
+      const box = el('div', 'checkbox');
+      box.title = 'Mark done…';
+      box.onclick = () => form.classList.toggle('open');
+
+      const text = el('span', 'todo-text');
+      text.textContent = r.text;
+
+      const icon = el('span', 'recurring-icon');
+      icon.textContent = '↻';
+
+      row.append(box, text, icon);
+
+      if (isDue(r)) {
+        const tag = el('span', 'tag tag-due');
+        tag.textContent = 'due ' + fmt(r.mustDoBy);
+        row.append(tag);
+      } else if (isUpcoming(r) && r.mustDoBy) {
+        const tag = el('span', 'tag tag-soon');
+        tag.textContent = 'by ' + fmt(r.mustDoBy);
+        row.append(tag);
+      } else if (r.mustDoBy) {
+        const tag = el('span', 'tag');
+        tag.style.color = '#555';
+        tag.textContent = 'by ' + fmt(r.mustDoBy);
+        row.append(tag);
+      }
+
+      row.append(deleteBtn(() => removeRecurring(r.id)));
+
+      const form = makeCompleteForm(r.id);
+
+      li.append(row, form);
+      return li;
+    }
+
+    function makeCompleteForm(id) {
+      const div = el('div', 'complete-form');
+      const t = today();
+
+      div.innerHTML = `
+        <div class="form-grid">
+          <div class="form-field">
+            <label>Completed on</label>
+            <input type="date" id="cf-done-${id}" value="${t}" max="${t}" />
+          </div>
+          <div class="form-field">
+            <label>Snooze until</label>
+            <input type="date" id="cf-snooze-${id}" value="${addDays(7)}" />
+          </div>
+          <div class="form-field">
+            <label>Must do by</label>
+            <input type="date" id="cf-mustdo-${id}" value="${addDays(10)}" />
+          </div>
+        </div>
+        <div class="form-actions">
+          <button class="cancel-btn" onclick="closeCompleteForm(${id})">Cancel</button>
+          <button class="save-btn" onclick="saveCompletion(${id})">Save</button>
+        </div>`;
+
+      return div;
+    }
+
+    function makeTemplateItem(r) {
+      const li = document.createElement('li');
+      li.className = 'template-item';
+
+      const text = el('span', 'template-text');
+      text.textContent = r.text;
+
+      const meta = el('span', 'template-meta');
+      if (isDue(r)) {
+        meta.innerHTML = `<span class="m-due">due ${fmt(r.mustDoBy)}</span>`;
+      } else if (isActive(r)) {
+        meta.innerHTML = `<span class="m-active">active</span>` +
+          (r.mustDoBy ? ` · by ${fmt(r.mustDoBy)}` : '');
+      } else {
+        meta.textContent = `back ${fmt(r.snoozeUntil)}` +
+          (r.mustDoBy ? ` · by ${fmt(r.mustDoBy)}` : '');
+        if (r.lastCompleted) meta.textContent += ` · done ${fmt(r.lastCompleted)}`;
+      }
+
+      li.append(text, meta, deleteBtn(() => removeRecurring(r.id)));
+      return li;
+    }
+
+    // ── Actions ──────────────────────────────────────────────
 
     function addTodo() {
       const input = document.getElementById('new-todo');
       const text = input.value.trim();
       if (!text) return;
-      const todos = load();
-      todos.unshift({ id: Date.now(), text, done: false });
-      save(todos);
+      const data = load();
+      data.todos.unshift({ id: Date.now(), text, done: false });
+      save(data);
       input.value = '';
       render();
     }
 
-    function toggle(id) {
-      const todos = load();
-      const t = todos.find(t => t.id === id);
-      if (t) t.done = !t.done;
-      save(todos);
+    function removeTodo(id) {
+      const data = load();
+      data.todos = data.todos.filter(t => t.id !== id);
+      save(data);
       render();
     }
 
-    function remove(id) {
-      save(load().filter(t => t.id !== id));
+    function closeCompleteForm(id) {
+      document.getElementById('cf-done-' + id)?.closest('.complete-form')?.classList.remove('open');
+    }
+
+    function saveCompletion(id) {
+      const completed = document.getElementById('cf-done-' + id)?.value;
+      const snooze    = document.getElementById('cf-snooze-' + id)?.value || null;
+      const mustdo    = document.getElementById('cf-mustdo-' + id)?.value || null;
+
+      const data = load();
+      const r = data.recurring.find(x => x.id === id);
+      if (r) {
+        r.lastCompleted = completed || today();
+        r.snoozeUntil   = snooze;
+        r.mustDoBy      = mustdo;
+      }
+      save(data);
       render();
     }
+
+    function toggleAddRecurring() {
+      const form = document.getElementById('add-recurring-form');
+      form.classList.toggle('open');
+      if (form.classList.contains('open')) document.getElementById('new-rec-text').focus();
+    }
+
+    function addRecurring() {
+      const text = document.getElementById('new-rec-text').value.trim();
+      if (!text) return;
+      const data = load();
+      data.recurring.push({
+        id: Date.now(),
+        text,
+        snoozeUntil:   document.getElementById('new-rec-snooze').value || null,
+        mustDoBy:      document.getElementById('new-rec-mustdo').value || null,
+        lastCompleted: null
+      });
+      save(data);
+      document.getElementById('new-rec-text').value = '';
+      document.getElementById('new-rec-snooze').value = '';
+      document.getElementById('new-rec-mustdo').value = '';
+      document.getElementById('add-recurring-form').classList.remove('open');
+      render();
+    }
+
+    function removeRecurring(id) {
+      const data = load();
+      data.recurring = data.recurring.filter(r => r.id !== id);
+      save(data);
+      render();
+    }
+
+    // ── Helpers ──────────────────────────────────────────────
+
+    function el(tag, cls) {
+      const e = document.createElement(tag);
+      if (cls) e.className = cls;
+      return e;
+    }
+
+    function deleteBtn(fn) {
+      const b = el('button', 'delete-btn');
+      b.textContent = '×';
+      b.onclick = fn;
+      return b;
+    }
+
+    // ── Init ─────────────────────────────────────────────────
 
     document.getElementById('new-todo').addEventListener('keydown', e => {
       if (e.key === 'Enter') addTodo();
+    });
+
+    document.getElementById('new-rec-text').addEventListener('keydown', e => {
+      if (e.key === 'Enter') addRecurring();
     });
 
     render();
