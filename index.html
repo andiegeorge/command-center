@@ -3,158 +3,651 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Command Center</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="style.css">
+  <title>Andie's To-Dos</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+      background: #0f0f0f;
+      color: #e8e8e8;
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      padding: 60px 20px;
+    }
+
+    .container { width: 100%; max-width: 560px; }
+
+    h1 {
+      font-size: 1.4rem;
+      font-weight: 500;
+      color: #aaa;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      margin-bottom: 32px;
+    }
+
+    .input-row {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 28px;
+    }
+
+    input[type="text"] {
+      flex: 1;
+      background: #1a1a1a;
+      border: 1px solid #2e2e2e;
+      border-radius: 8px;
+      color: #e8e8e8;
+      font-size: 0.95rem;
+      padding: 10px 14px;
+      outline: none;
+      transition: border-color 0.15s;
+    }
+
+    input[type="text"]::placeholder { color: #555; }
+    input[type="text"]:focus { border-color: #555; }
+
+    input[type="date"] {
+      width: 100%;
+      background: #1a1a1a;
+      border: 1px solid #2e2e2e;
+      border-radius: 6px;
+      color: #e8e8e8;
+      font-size: 0.85rem;
+      padding: 7px 10px;
+      outline: none;
+      color-scheme: dark;
+      transition: border-color 0.15s;
+    }
+
+    input[type="date"]:focus { border-color: #555; }
+
+    button.add-btn {
+      background: #e8e8e8;
+      color: #0f0f0f;
+      border: none;
+      border-radius: 8px;
+      font-size: 0.95rem;
+      font-weight: 500;
+      padding: 10px 18px;
+      cursor: pointer;
+      transition: background 0.15s;
+      white-space: nowrap;
+    }
+
+    button.add-btn:hover { background: #fff; }
+
+    ul { list-style: none; }
+
+    li.todo-item {
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 12px;
+      padding: 11px 0;
+      border-bottom: 1px solid #1e1e1e;
+    }
+
+    li.todo-item:last-child { border-bottom: none; }
+
+    .item-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      width: 100%;
+    }
+
+    .checkbox {
+      width: 18px;
+      height: 18px;
+      border: 1.5px solid #3a3a3a;
+      border-radius: 50%;
+      flex-shrink: 0;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: border-color 0.15s, background 0.15s;
+    }
+
+    .checkbox:hover { border-color: #888; }
+
+    .todo-text {
+      flex: 1;
+      font-size: 0.95rem;
+      line-height: 1.4;
+    }
+
+    .recurring-icon {
+      font-size: 0.8rem;
+      color: #444;
+      flex-shrink: 0;
+    }
+
+    .tag {
+      font-size: 0.73rem;
+      padding: 2px 7px;
+      border-radius: 4px;
+      flex-shrink: 0;
+    }
+
+    .tag-due    { background: #3a1a0a; color: #e8854a; }
+    .tag-soon   { background: #1a1a2a; color: #7a7aaa; }
+
+    .delete-btn {
+      background: none;
+      border: none;
+      color: #2e2e2e;
+      font-size: 1.1rem;
+      cursor: pointer;
+      padding: 0 4px;
+      line-height: 1;
+      transition: color 0.15s;
+      flex-shrink: 0;
+    }
+
+    .item-row:hover .delete-btn { color: #666; }
+    .delete-btn:hover { color: #e55 !important; }
+
+    /* Inline completion form */
+    .complete-form {
+      width: 100%;
+      background: #161616;
+      border: 1px solid #2a2a2a;
+      border-radius: 8px;
+      padding: 14px;
+      display: none;
+    }
+
+    .complete-form.open { display: block; }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 10px;
+      margin-bottom: 12px;
+    }
+
+    .form-field label {
+      display: block;
+      font-size: 0.68rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: #555;
+      margin-bottom: 5px;
+    }
+
+    .form-actions {
+      display: flex;
+      gap: 8px;
+      justify-content: flex-end;
+    }
+
+    button.save-btn {
+      background: #e8e8e8;
+      color: #0f0f0f;
+      border: none;
+      border-radius: 6px;
+      font-size: 0.85rem;
+      font-weight: 500;
+      padding: 7px 14px;
+      cursor: pointer;
+    }
+
+    button.save-btn:hover { background: #fff; }
+
+    button.cancel-btn {
+      background: none;
+      border: 1px solid #2e2e2e;
+      color: #777;
+      border-radius: 6px;
+      font-size: 0.85rem;
+      padding: 7px 14px;
+      cursor: pointer;
+    }
+
+    button.cancel-btn:hover { border-color: #555; color: #aaa; }
+
+    /* Recurring section */
+    .section-divider {
+      border: none;
+      border-top: 1px solid #1e1e1e;
+      margin: 36px 0 24px;
+    }
+
+    .section-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 14px;
+    }
+
+    .section-label {
+      font-size: 0.7rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: #444;
+    }
+
+    button.icon-btn {
+      background: none;
+      border: 1px solid #2e2e2e;
+      color: #666;
+      border-radius: 6px;
+      font-size: 0.82rem;
+      padding: 3px 10px;
+      cursor: pointer;
+      transition: border-color 0.15s, color 0.15s;
+    }
+
+    button.icon-btn:hover { border-color: #555; color: #aaa; }
+
+    .add-recurring-form {
+      background: #161616;
+      border: 1px solid #2a2a2a;
+      border-radius: 8px;
+      padding: 14px;
+      margin-bottom: 16px;
+      display: none;
+    }
+
+    .add-recurring-form.open { display: block; }
+    .add-recurring-form .input-row { margin-bottom: 10px; }
+    .add-recurring-form .form-grid { grid-template-columns: 1fr 1fr; }
+
+    li.template-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 10px 0;
+      border-bottom: 1px solid #1e1e1e;
+    }
+
+    li.template-item:last-child { border-bottom: none; }
+
+    .template-text {
+      flex: 1;
+      font-size: 0.92rem;
+      color: #ccc;
+    }
+
+    .template-meta {
+      font-size: 0.75rem;
+      color: #555;
+      text-align: right;
+      flex-shrink: 0;
+      white-space: nowrap;
+    }
+
+    .template-meta .m-active { color: #5a8a5a; }
+    .template-meta .m-due    { color: #e8854a; }
+
+    .empty {
+      color: #333;
+      font-size: 0.9rem;
+      padding: 10px 0;
+      display: block;
+    }
+  </style>
 </head>
 <body>
+  <div class="container">
+    <h1>To-Do</h1>
 
-  <!-- PAT Setup Modal -->
-  <div id="setup-modal" class="modal hidden">
-    <div class="modal-box">
-      <h2>Set up Command Center</h2>
-      <p>Enter your GitHub details to connect your task list.</p>
-      <label>GitHub Username<input id="setup-owner" type="text" placeholder="your-username"></label>
-      <label>Repo Name<input id="setup-repo" type="text" placeholder="command-center"></label>
-      <label>Personal Access Token<input id="setup-token" type="password" placeholder="ghp_..."></label>
-      <p class="setup-hint">Create a PAT at GitHub → Settings → Developer Settings → Tokens (classic). Needs <code>repo</code> scope.</p>
-      <button id="setup-save">Connect</button>
-      <p id="setup-error" class="error hidden"></p>
+    <div class="input-row">
+      <input type="text" id="new-todo" placeholder="Add a task…" autocomplete="off" />
+      <button class="add-btn" onclick="addTodo()">Add</button>
     </div>
+
+    <ul id="active-list"></ul>
+
+    <hr class="section-divider" />
+
+    <div class="section-header">
+      <span class="section-label">Recurring</span>
+      <button class="icon-btn" onclick="toggleAddRecurring()">+ Add</button>
+    </div>
+
+    <div class="add-recurring-form" id="add-recurring-form">
+      <div class="input-row">
+        <input type="text" id="new-rec-text" placeholder="Task name…" autocomplete="off" />
+      </div>
+      <div class="form-grid">
+        <div class="form-field">
+          <label>Snooze until</label>
+          <input type="date" id="new-rec-snooze" />
+        </div>
+        <div class="form-field">
+          <label>Must do by</label>
+          <input type="date" id="new-rec-mustdo" />
+        </div>
+      </div>
+      <div class="form-actions">
+        <button class="cancel-btn" onclick="toggleAddRecurring()">Cancel</button>
+        <button class="save-btn" onclick="addRecurring()">Add</button>
+      </div>
+    </div>
+
+    <ul id="recurring-list"></ul>
   </div>
 
-  <!-- Main App -->
-  <div id="app" class="hidden">
+  <script>
+    const KEY = 'andie-todos-v2';
 
-    <!-- Tab Nav -->
-    <nav class="tab-nav">
-      <span id="app-title">Command Center</span>
-      <div class="tabs">
-        <button class="tab active" data-tab="today">Today</button>
-        <button class="tab" data-tab="history">History</button>
-      </div>
-      <button id="settings-btn" class="icon-btn" title="Settings">⚙</button>
-    </nav>
+    function load() {
+      try {
+        const d = JSON.parse(localStorage.getItem(KEY));
+        return (d && Array.isArray(d.todos)) ? d : { todos: [], recurring: [] };
+      } catch { return { todos: [], recurring: [] }; }
+    }
 
-    <!-- Today Tab -->
-    <div id="tab-today" class="tab-content">
+    function save(data) { localStorage.setItem(KEY, JSON.stringify(data)); }
 
-      <!-- Brain Dump Bar -->
-      <div class="brain-dump-bar">
-        <input
-          id="brain-dump-input"
-          type="text"
-          placeholder="What's on your mind?"
-          autocomplete="off"
-        >
-        <div id="brain-dump-options" class="dump-options hidden">
-          <input id="opt-due" type="date" title="Due date">
-          <button id="opt-eow" type="button" class="opt-shortcut" title="End of week (Friday)">EOW</button>
-          <input id="opt-estimate" type="number" placeholder="hrs" min="0.25" step="0.25" max="24" title="Estimated hours">
-          <select id="opt-priority" title="Priority">
-            <option value="medium">Medium</option>
-            <option value="high">High</option>
-            <option value="low">Low</option>
-          </select>
-          <input id="opt-category" type="text" placeholder="Category" maxlength="30">
-          <label class="opt-checkbox" title="Critical — always shown in red"><input id="opt-critical" type="checkbox"> Critical</label>
-          <label class="opt-checkbox" title="Lock to this date — cannot be pulled forward"><input id="opt-lock" type="checkbox"> Lock</label>
-          <button id="opt-save">Add</button>
+    function today() { return new Date().toISOString().slice(0, 10); }
+
+    function addDays(n, from) {
+      const d = new Date((from || today()) + 'T00:00:00');
+      d.setDate(d.getDate() + n);
+      return d.toISOString().slice(0, 10);
+    }
+
+    function fmt(s) {
+      if (!s) return '';
+      return new Date(s + 'T00:00:00').toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+    }
+
+    function isActive(r)  { return !r.snoozeUntil || r.snoozeUntil <= today(); }
+    function isDue(r)     { return r.mustDoBy && r.mustDoBy <= today(); }
+    function isUpcoming(r){ return r.mustDoBy && r.mustDoBy > today() && addDays(3) >= r.mustDoBy; }
+
+    // ── Render ──────────────────────────────────────────────
+
+    function render() {
+      renderActiveList();
+      renderRecurringList();
+    }
+
+    function renderActiveList() {
+      const { todos, recurring } = load();
+      const list = document.getElementById('active-list');
+      list.innerHTML = '';
+
+      const activeTodos = todos.filter(t => !t.done);
+      const activeRec   = recurring.filter(isActive);
+
+      if (!activeTodos.length && !activeRec.length) {
+        list.innerHTML = '<li class="todo-item"><span class="empty">Nothing here yet.</span></li>';
+        return;
+      }
+
+      activeTodos.forEach(t => list.appendChild(makeTodoItem(t)));
+      activeRec.forEach(r  => list.appendChild(makeRecurringItem(r)));
+    }
+
+    function renderRecurringList() {
+      const { recurring } = load();
+      const list = document.getElementById('recurring-list');
+      list.innerHTML = '';
+
+      if (!recurring.length) {
+        list.innerHTML = '<li class="template-item"><span class="empty">No recurring tasks yet.</span></li>';
+        return;
+      }
+
+      recurring.forEach(r => list.appendChild(makeTemplateItem(r)));
+    }
+
+    // ── Item builders ────────────────────────────────────────
+
+    function makeTodoItem(todo) {
+      const li = document.createElement('li');
+      li.className = 'todo-item';
+
+      const row = document.createElement('div');
+      row.className = 'item-row';
+
+      const box = el('div', 'checkbox');
+      box.onclick = () => removeTodo(todo.id);
+
+      const text = el('span', 'todo-text');
+      text.textContent = todo.text;
+
+      const del = deleteBtn(() => removeTodo(todo.id));
+
+      row.append(box, text, del);
+      li.append(row);
+      return li;
+    }
+
+    function makeRecurringItem(r) {
+      const li = document.createElement('li');
+      li.className = 'todo-item';
+
+      const row = document.createElement('div');
+      row.className = 'item-row';
+
+      const box = el('div', 'checkbox');
+      box.title = 'Mark done…';
+      box.onclick = () => form.classList.toggle('open');
+
+      const text = el('span', 'todo-text');
+      text.textContent = r.text;
+
+      const icon = el('span', 'recurring-icon');
+      icon.textContent = '↻';
+
+      row.append(box, text, icon);
+
+      if (isDue(r)) {
+        const tag = el('span', 'tag tag-due');
+        tag.textContent = 'due ' + fmt(r.mustDoBy);
+        row.append(tag);
+      } else if (isUpcoming(r) && r.mustDoBy) {
+        const tag = el('span', 'tag tag-soon');
+        tag.textContent = 'by ' + fmt(r.mustDoBy);
+        row.append(tag);
+      } else if (r.mustDoBy) {
+        const tag = el('span', 'tag');
+        tag.style.color = '#555';
+        tag.textContent = 'by ' + fmt(r.mustDoBy);
+        row.append(tag);
+      }
+
+      row.append(deleteBtn(() => removeRecurring(r.id)));
+
+      const form = makeCompleteForm(r.id);
+
+      li.append(row, form);
+      return li;
+    }
+
+    function makeCompleteForm(id) {
+      const div = el('div', 'complete-form');
+      const t = today();
+
+      div.innerHTML = `
+        <div class="form-grid">
+          <div class="form-field">
+            <label>Completed on</label>
+            <input type="date" id="cf-done-${id}" value="${t}" max="${t}" />
+          </div>
+          <div class="form-field">
+            <label>Snooze until</label>
+            <input type="date" id="cf-snooze-${id}" value="${addDays(7)}" />
+          </div>
+          <div class="form-field">
+            <label>Must do by</label>
+            <input type="date" id="cf-mustdo-${id}" value="${addDays(10)}" />
+          </div>
         </div>
-      </div>
+        <div class="form-actions">
+          <button class="cancel-btn" onclick="closeCompleteForm(${id})">Cancel</button>
+          <button class="save-btn" onclick="saveCompletion(${id})">Save</button>
+        </div>`;
 
-      <!-- Loading / Error -->
-      <div id="today-loading" class="status-msg">Loading tasks…</div>
-      <div id="today-error" class="status-msg error hidden"></div>
+      return div;
+    }
 
-      <!-- Light Day Banner (rendered dynamically) -->
-      <div id="light-day-banner" class="light-day-banner hidden">
-        <div class="light-day-banner-header" id="light-day-header"></div>
-        <div class="light-day-suggestions" id="light-day-suggestions"></div>
-      </div>
+    function makeTemplateItem(r) {
+      const li = document.createElement('li');
+      li.className = 'template-item';
 
-      <!-- Today Zone -->
-      <section class="zone zone-today">
-        <div class="zone-header">
-          <h2>Today</h2>
-          <span id="today-date" class="zone-date"></span>
-          <span id="today-count" class="zone-count"></span>
-        </div>
-        <ul id="today-list" class="task-list"></ul>
-        <p id="today-empty" class="empty-msg hidden">Nothing due today. Nice.</p>
-      </section>
+      const text = el('span', 'template-text');
+      text.textContent = r.text;
 
-      <!-- Coming Up Zone -->
-      <section class="zone zone-coming-up">
-        <div class="zone-header">
-          <h2>Coming Up</h2>
-        </div>
-        <div id="coming-up-list"></div>
-        <p id="coming-up-empty" class="empty-msg hidden">Clear skies ahead.</p>
-      </section>
+      const meta = el('span', 'template-meta');
+      if (isDue(r)) {
+        meta.innerHTML = `<span class="m-due">due ${fmt(r.mustDoBy)}</span>`;
+      } else if (isActive(r)) {
+        meta.innerHTML = `<span class="m-active">active</span>` +
+          (r.mustDoBy ? ` · by ${fmt(r.mustDoBy)}` : '');
+      } else {
+        meta.textContent = `back ${fmt(r.snoozeUntil)}` +
+          (r.mustDoBy ? ` · by ${fmt(r.mustDoBy)}` : '');
+        if (r.lastCompleted) meta.textContent += ` · done ${fmt(r.lastCompleted)}`;
+      }
 
-      <!-- Everything Else Zone -->
-      <section class="zone zone-everything-else">
-        <button class="zone-toggle" id="everything-else-toggle">
-          <h2>Everything Else</h2>
-          <span class="toggle-icon">▶</span>
-        </button>
-        <ul id="everything-else-list" class="task-list collapsed"></ul>
-      </section>
+      li.append(text, meta, deleteBtn(() => removeRecurring(r.id)));
+      return li;
+    }
 
-      <!-- Daily Recap -->
-      <section class="zone zone-recap">
-        <h3>Wrap up today</h3>
-        <textarea id="recap-text" placeholder="What did you get done today?" rows="3"></textarea>
-        <button id="recap-save">Save recap</button>
-        <span id="recap-saved" class="hidden">Saved.</span>
-      </section>
+    // ── Actions ──────────────────────────────────────────────
 
-    </div><!-- /tab-today -->
+    function addTodo() {
+      const input = document.getElementById('new-todo');
+      const text = input.value.trim();
+      if (!text) return;
+      const data = load();
+      data.todos.unshift({ id: Date.now(), text, done: false });
+      save(data);
+      input.value = '';
+      render();
+    }
 
-    <!-- History Tab -->
-    <div id="tab-history" class="tab-content hidden">
+    function removeTodo(id) {
+      const data = load();
+      data.todos = data.todos.filter(t => t.id !== id);
+      save(data);
+      render();
+    }
 
-      <!-- Mood Trend -->
-      <section class="zone zone-trend">
-        <h2>Mood Trend</h2>
-        <div id="mood-trend"></div>
-      </section>
+    function closeCompleteForm(id) {
+      document.getElementById('cf-done-' + id)?.closest('.complete-form')?.classList.remove('open');
+    }
 
-      <!-- Week Navigation -->
-      <div class="week-nav">
-        <button id="week-prev">◀</button>
-        <span id="week-label"></span>
-        <button id="week-next">▶</button>
-      </div>
+    function saveCompletion(id) {
+      const completed = document.getElementById('cf-done-' + id)?.value;
+      const snooze    = document.getElementById('cf-snooze-' + id)?.value || null;
+      const mustdo    = document.getElementById('cf-mustdo-' + id)?.value || null;
 
-      <!-- Reflection Card -->
-      <section class="zone zone-reflection">
-        <h3>How did this week feel?</h3>
-        <div class="mood-selector" id="mood-selector">
-          <button class="mood-btn" data-mood="Crushed it">Crushed it</button>
-          <button class="mood-btn" data-mood="Good week">Good week</button>
-          <button class="mood-btn" data-mood="Mixed">Mixed</button>
-          <button class="mood-btn" data-mood="Fell behind">Fell behind</button>
-          <button class="mood-btn" data-mood="Overwhelmed">Overwhelmed</button>
-        </div>
-        <textarea id="reflection-text" placeholder="Any notes on this week…" rows="4"></textarea>
-        <button id="reflection-save">Save Reflection</button>
-        <span id="reflection-saved" class="save-confirm hidden">Saved.</span>
-      </section>
+      const data = load();
+      const r = data.recurring.find(x => x.id === id);
+      if (r) {
+        r.lastCompleted = completed || today();
+        r.snoozeUntil   = snooze;
+        r.mustDoBy      = mustdo;
+      }
+      save(data);
+      render();
+    }
 
-      <!-- Completed Tasks -->
-      <section class="zone zone-completed">
-        <h3>Completed This Week</h3>
-        <div id="completed-list"></div>
-        <p id="completed-empty" class="empty-msg hidden">No completed tasks recorded for this week.</p>
-      </section>
+    function toggleAddRecurring() {
+      const form = document.getElementById('add-recurring-form');
+      form.classList.toggle('open');
+      if (form.classList.contains('open')) document.getElementById('new-rec-text').focus();
+    }
 
-    </div><!-- /tab-history -->
+    function addRecurring() {
+      const text = document.getElementById('new-rec-text').value.trim();
+      if (!text) return;
+      const data = load();
+      data.recurring.push({
+        id: Date.now(),
+        text,
+        snoozeUntil:   document.getElementById('new-rec-snooze').value || null,
+        mustDoBy:      document.getElementById('new-rec-mustdo').value || null,
+        lastCompleted: null
+      });
+      save(data);
+      document.getElementById('new-rec-text').value = '';
+      document.getElementById('new-rec-snooze').value = '';
+      document.getElementById('new-rec-mustdo').value = '';
+      document.getElementById('add-recurring-form').classList.remove('open');
+      render();
+    }
 
-  </div><!-- /app -->
+    function removeRecurring(id) {
+      const data = load();
+      data.recurring = data.recurring.filter(r => r.id !== id);
+      save(data);
+      render();
+    }
 
-  <script type="module" src="js/app.js"></script>
+    // ── Helpers ──────────────────────────────────────────────
+
+    function el(tag, cls) {
+      const e = document.createElement(tag);
+      if (cls) e.className = cls;
+      return e;
+    }
+
+    function deleteBtn(fn) {
+      const b = el('button', 'delete-btn');
+      b.textContent = '×';
+      b.onclick = fn;
+      return b;
+    }
+
+    // ── Seed ─────────────────────────────────────────────────
+
+    function seedIfNeeded() {
+      const data = load();
+      if (data.seeded) return;
+
+      const now = Date.now();
+
+      const seedTodos = [
+        'Wed EOD (hard): VIP Slack workflow – solo brainstorm + build + test',
+        'End of week: Mima – net zero + daily evals',
+        'End of week: Coach – daily evals',
+        'End of week: Darrell Younger hypothesis-check with Coco',
+      ];
+
+      const seedRecurring = [
+        'GitHub – primer → Q&A conversation → quiz (concepts, workflows, spot gaps, eventually contribute to structure)',
+        'DBT & DBT modeling – same learning arc (prove you can hang with analytical engineering without becoming one)',
+        'AI infrastructure & service account value prop – where things are hosted, strands, local vs shared, how GitHub fits in, why Snowflake service account matters',
+        'Ops OS literacy (Matt Hardy & Annie\'s build)',
+        'Claude managed agents & Claude tag',
+        'Command center in Claude Code – build + refine',
+      ];
+
+      seedTodos.forEach((text, i) => {
+        data.todos.push({ id: now + i, text, done: false });
+      });
+
+      seedRecurring.forEach((text, i) => {
+        data.recurring.push({ id: now + 100 + i, text, snoozeUntil: null, mustDoBy: null, lastCompleted: null });
+      });
+
+      data.seeded = true;
+      save(data);
+    }
+
+    // ── Init ─────────────────────────────────────────────────
+
+    document.getElementById('new-todo').addEventListener('keydown', e => {
+      if (e.key === 'Enter') addTodo();
+    });
+
+    document.getElementById('new-rec-text').addEventListener('keydown', e => {
+      if (e.key === 'Enter') addRecurring();
+    });
+
+    seedIfNeeded();
+    render();
+  </script>
 </body>
 </html>

@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Command Center</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- PAT Setup Modal -->
+  <div id="setup-modal" class="modal hidden">
+    <div class="modal-box">
+      <h2>Set up Command Center</h2>
+      <p>Enter your GitHub details to connect your task list.</p>
+      <label>GitHub Username<input id="setup-owner" type="text" placeholder="your-username"></label>
+      <label>Repo Name<input id="setup-repo" type="text" placeholder="command-center"></label>
+      <label>Personal Access Token<input id="setup-token" type="password" placeholder="ghp_..."></label>
+      <p class="setup-hint">Create a PAT at GitHub → Settings → Developer Settings → Tokens (classic). Needs <code>repo</code> scope.</p>
+      <button id="setup-save">Connect</button>
+      <p id="setup-error" class="error hidden"></p>
+    </div>
+  </div>
+
+  <!-- Main App -->
+  <div id="app" class="hidden">
+
+    <!-- Tab Nav -->
+    <nav class="tab-nav">
+      <span id="app-title">Command Center</span>
+      <div class="tabs">
+        <button class="tab active" data-tab="today">Today</button>
+        <button class="tab" data-tab="history">History</button>
+      </div>
+      <button id="settings-btn" class="icon-btn" title="Settings">⚙</button>
+    </nav>
+
+    <!-- Today Tab -->
+    <div id="tab-today" class="tab-content">
+
+      <!-- Brain Dump Bar -->
+      <div class="brain-dump-bar">
+        <input
+          id="brain-dump-input"
+          type="text"
+          placeholder="What's on your mind?"
+          autocomplete="off"
+        >
+        <div id="brain-dump-options" class="dump-options hidden">
+          <input id="opt-due" type="date" title="Due date">
+          <button id="opt-eow" type="button" class="opt-shortcut" title="End of week (Friday)">EOW</button>
+          <input id="opt-estimate" type="number" placeholder="hrs" min="0.25" step="0.25" max="24" title="Estimated hours">
+          <select id="opt-priority" title="Priority">
+            <option value="medium">Medium</option>
+            <option value="high">High</option>
+            <option value="low">Low</option>
+          </select>
+          <input id="opt-category" type="text" placeholder="Category" maxlength="30">
+          <label class="opt-checkbox" title="Critical — always shown in red"><input id="opt-critical" type="checkbox"> Critical</label>
+          <label class="opt-checkbox" title="Lock to this date — cannot be pulled forward"><input id="opt-lock" type="checkbox"> Lock</label>
+          <button id="opt-save">Add</button>
+        </div>
+      </div>
+
+      <!-- Loading / Error -->
+      <div id="today-loading" class="status-msg">Loading tasks…</div>
+      <div id="today-error" class="status-msg error hidden"></div>
+
+      <!-- Light Day Banner (rendered dynamically) -->
+      <div id="light-day-banner" class="light-day-banner hidden">
+        <div class="light-day-banner-header" id="light-day-header"></div>
+        <div class="light-day-suggestions" id="light-day-suggestions"></div>
+      </div>
+
+      <!-- Today Zone -->
+      <section class="zone zone-today">
+        <div class="zone-header">
+          <h2>Today</h2>
+          <span id="today-date" class="zone-date"></span>
+          <span id="today-count" class="zone-count"></span>
+        </div>
+        <ul id="today-list" class="task-list"></ul>
+        <p id="today-empty" class="empty-msg hidden">Nothing due today. Nice.</p>
+      </section>
+
+      <!-- Coming Up Zone -->
+      <section class="zone zone-coming-up">
+        <div class="zone-header">
+          <h2>Coming Up</h2>
+        </div>
+        <div id="coming-up-list"></div>
+        <p id="coming-up-empty" class="empty-msg hidden">Clear skies ahead.</p>
+      </section>
+
+      <!-- Everything Else Zone -->
+      <section class="zone zone-everything-else">
+        <button class="zone-toggle" id="everything-else-toggle">
+          <h2>Everything Else</h2>
+          <span class="toggle-icon">▶</span>
+        </button>
+        <ul id="everything-else-list" class="task-list collapsed"></ul>
+      </section>
+
+      <!-- Daily Recap -->
+      <section class="zone zone-recap">
+        <h3>Wrap up today</h3>
+        <textarea id="recap-text" placeholder="What did you get done today?" rows="3"></textarea>
+        <button id="recap-save">Save recap</button>
+        <span id="recap-saved" class="hidden">Saved.</span>
+      </section>
+
+    </div><!-- /tab-today -->
+
+    <!-- History Tab -->
+    <div id="tab-history" class="tab-content hidden">
+
+      <!-- Mood Trend -->
+      <section class="zone zone-trend">
+        <h2>Mood Trend</h2>
+        <div id="mood-trend"></div>
+      </section>
+
+      <!-- Week Navigation -->
+      <div class="week-nav">
+        <button id="week-prev">◀</button>
+        <span id="week-label"></span>
+        <button id="week-next">▶</button>
+      </div>
+
+      <!-- Reflection Card -->
+      <section class="zone zone-reflection">
+        <h3>How did this week feel?</h3>
+        <div class="mood-selector" id="mood-selector">
+          <button class="mood-btn" data-mood="Crushed it">Crushed it</button>
+          <button class="mood-btn" data-mood="Good week">Good week</button>
+          <button class="mood-btn" data-mood="Mixed">Mixed</button>
+          <button class="mood-btn" data-mood="Fell behind">Fell behind</button>
+          <button class="mood-btn" data-mood="Overwhelmed">Overwhelmed</button>
+        </div>
+        <textarea id="reflection-text" placeholder="Any notes on this week…" rows="4"></textarea>
+        <button id="reflection-save">Save Reflection</button>
+        <span id="reflection-saved" class="save-confirm hidden">Saved.</span>
+      </section>
+
+      <!-- Completed Tasks -->
+      <section class="zone zone-completed">
+        <h3>Completed This Week</h3>
+        <div id="completed-list"></div>
+        <p id="completed-empty" class="empty-msg hidden">No completed tasks recorded for this week.</p>
+      </section>
+
+    </div><!-- /tab-history -->
+
+  </div><!-- /app -->
+
+  <script type="module" src="js/app.js"></script>
+</body>
+</html>
