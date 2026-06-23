@@ -600,6 +600,42 @@
       return b;
     }
 
+    // ── Seed ─────────────────────────────────────────────────
+
+    function seedIfNeeded() {
+      const data = load();
+      if (data.seeded) return;
+
+      const now = Date.now();
+
+      const seedTodos = [
+        'Wed EOD (hard): VIP Slack workflow – solo brainstorm + build + test',
+        'End of week: Mima – net zero + daily evals',
+        'End of week: Coach – daily evals',
+        'End of week: Darrell Younger hypothesis-check with Coco',
+      ];
+
+      const seedRecurring = [
+        'GitHub – primer → Q&A conversation → quiz (concepts, workflows, spot gaps, eventually contribute to structure)',
+        'DBT & DBT modeling – same learning arc (prove you can hang with analytical engineering without becoming one)',
+        'AI infrastructure & service account value prop – where things are hosted, strands, local vs shared, how GitHub fits in, why Snowflake service account matters',
+        'Ops OS literacy (Matt Hardy & Annie\'s build)',
+        'Claude managed agents & Claude tag',
+        'Command center in Claude Code – build + refine',
+      ];
+
+      seedTodos.forEach((text, i) => {
+        data.todos.push({ id: now + i, text, done: false });
+      });
+
+      seedRecurring.forEach((text, i) => {
+        data.recurring.push({ id: now + 100 + i, text, snoozeUntil: null, mustDoBy: null, lastCompleted: null });
+      });
+
+      data.seeded = true;
+      save(data);
+    }
+
     // ── Init ─────────────────────────────────────────────────
 
     document.getElementById('new-todo').addEventListener('keydown', e => {
@@ -610,6 +646,7 @@
       if (e.key === 'Enter') addRecurring();
     });
 
+    seedIfNeeded();
     render();
   </script>
 </body>
