@@ -333,6 +333,28 @@
 
     .task-actions { display: flex; gap: 8px; margin-top: 10px; }
 
+    /* ── Edit form (inline task editing) ── */
+    .edit-form { padding: 12px 14px; }
+    .edit-form input, .edit-form select, .edit-form textarea {
+      width: 100%;
+      background: #f7f6f3;
+      border: 1px solid #e2e0db;
+      border-radius: 6px;
+      color: #1c1c1c;
+      font-size: 0.88rem;
+      font-family: inherit;
+      padding: 7px 10px;
+      outline: none;
+      transition: border-color 0.15s;
+      margin-bottom: 10px;
+    }
+    .edit-form input:focus, .edit-form select:focus, .edit-form textarea:focus { border-color: #bbb; background: #fff; }
+    .edit-form .edit-headline { font-size: 0.93rem; }
+    .edit-form input[type="date"] { color-scheme: light; }
+    .edit-form textarea { resize: vertical; min-height: 56px; }
+    .edit-form .edit-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+    .edit-form .edit-grid > div input, .edit-form .edit-grid > div select { margin-bottom: 0; }
+
     /* ── Recurring items ── */
     li.rec-item {
       background: #faf9f7;
@@ -835,6 +857,7 @@
     const KEY = 'andie-todos-v2';
     let selectedMood = null;
     let showMastered = false;
+    let editingId = null;
 
     const MOOD_CLASS = {
       'Crushed it': 'mood-crushed',
@@ -1021,6 +1044,8 @@
     // ── Item builders ────────────────────────────────────
 
     function makeTodoItem(todo) {
+      if (editingId === todo.id) return makeEditItem(todo);
+
       const li = document.createElement('li');
       li.className = 'task-item';
 
@@ -1079,11 +1104,18 @@
 
       const actions = document.createElement('div');
       actions.className = 'task-actions';
+
+      const edit = document.createElement('button');
+      edit.className = 'sm-btn';
+      edit.textContent = 'Edit';
+      edit.onclick = () => { editingId = todo.id; renderActive(); };
+
       const del = document.createElement('button');
       del.className = 'del-btn';
       del.textContent = 'Delete';
       del.onclick = () => deleteTodo(todo.id);
-      actions.append(del);
+
+      actions.append(edit, del);
       detail.append(actions);
 
       li.append(main, detail);
@@ -1426,6 +1458,63 @@
       data.todos = data.todos.filter(t => t.id !== id);
       save(data);
       render();
+    }
+
+    function makeEditItem(todo) {
+      const li = document.createElement('li');
+      li.className = 'task-item expanded';
+
+      const form = document.createElement('div');
+      form.className = 'edit-form';
+
+      form.innerHTML = `
+        <input class="edit-headline" type="text" id="edit-text-${todo.id}" value="${escHtml(todo.text)}" placeholder="Task…" />
+        <div class="edit-grid" style="margin-bottom:10px;">
+          <div>
+            <span class="field-label">Priority</span>
+            <select id="edit-priority-${todo.id}">
+              <option value="medium"${(todo.priority||'medium')==='medium'?' selected':''}>Medium</option>
+              <option value="urgent"${todo.priority==='urgent'?' selected':''}>Urgent</option>
+              <option value="high"${todo.priority==='high'?' selected':''}>High</option>
+              <option value="low"${todo.priority==='low'?' selected':''}>Low</option>
+            </select>
+          </div>
+          <div>
+            <span class="field-label">Due date</span>
+            <input type="date" id="edit-due-${todo.id}" value="${todo.due||''}" />
+          </div>
+        </div>
+        <span class="field-label">Category</span>
+        <input type="text" id="edit-category-${todo.id}" value="${escHtml(todo.category||'')}" placeholder="e.g. Work, Learning…" />
+        <span class="field-label">Context / notes</span>
+        <textarea id="edit-context-${todo.id}" placeholder="Any extra detail…">${escHtml(todo.context||'')}</textarea>
+        <div class="form-actions">
+          <button class="cancel-btn" onclick="cancelEdit()">Cancel</button>
+          <button class="save-btn" onclick="saveTodo(${todo.id})">Save</button>
+        </div>`;
+
+      li.appendChild(form);
+      return li;
+    }
+
+    function saveTodo(id) {
+      const data = load();
+      const task = data.todos.find(t => t.id === id);
+      if (task) {
+        task.text     = document.getElementById('edit-text-' + id)?.value.trim() || task.text;
+        task.priority = document.getElementById('edit-priority-' + id)?.value || task.priority;
+        task.due      = document.getElementById('edit-due-' + id)?.value || null;
+        task.category = document.getElementById('edit-category-' + id)?.value.trim() || null;
+        task.context  = document.getElementById('edit-context-' + id)?.value.trim() || null;
+      }
+      save(data);
+      editingId = null;
+      render();
+    }
+
+    function cancelEdit() {
+      editingId = null;
+      renderActive();
     }
 
     function deleteTodo(id) {
