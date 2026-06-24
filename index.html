@@ -52,6 +52,106 @@
 
     .tab.active { background: #fff; color: #1c1c1c; box-shadow: 0 1px 2px rgba(0,0,0,0.08); }
 
+    /* ── Shared ── */
+    .field-label {
+      display: block;
+      font-size: 0.67rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: #bbb;
+      margin-bottom: 4px;
+    }
+
+    .section-divider { border: none; border-top: 1px solid #e2e0db; margin: 32px 0 22px; }
+
+    .section-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 12px;
+    }
+
+    .section-label {
+      font-size: 0.67rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: #c0bdb8;
+    }
+
+    button.sm-btn {
+      background: none;
+      border: 1px solid #e2e0db;
+      color: #bbb;
+      border-radius: 6px;
+      font-size: 0.78rem;
+      padding: 3px 10px;
+      cursor: pointer;
+      transition: all 0.15s;
+      font-family: inherit;
+    }
+
+    button.sm-btn:hover { border-color: #aaa; color: #666; }
+
+    .form-actions { display: flex; gap: 8px; justify-content: flex-end; }
+
+    button.save-btn {
+      background: #1c1c1c;
+      color: #fff;
+      border: none;
+      border-radius: 6px;
+      font-size: 0.85rem;
+      font-weight: 500;
+      padding: 7px 16px;
+      cursor: pointer;
+      font-family: inherit;
+      transition: background 0.15s;
+    }
+
+    button.save-btn:hover { background: #333; }
+    button.save-btn.saved { background: #7bbf7b; }
+
+    button.cancel-btn {
+      background: none;
+      border: 1px solid #e2e0db;
+      color: #aaa;
+      border-radius: 6px;
+      font-size: 0.85rem;
+      padding: 7px 14px;
+      cursor: pointer;
+      font-family: inherit;
+    }
+
+    button.cancel-btn:hover { border-color: #aaa; color: #666; }
+
+    button.del-btn {
+      background: none;
+      border: 1px solid #e2e0db;
+      color: #c0bdb8;
+      border-radius: 6px;
+      font-size: 0.78rem;
+      padding: 4px 12px;
+      cursor: pointer;
+      transition: all 0.15s;
+      font-family: inherit;
+    }
+
+    button.del-btn:hover { border-color: #e55; color: #e55; }
+
+    button.x-btn {
+      background: none;
+      border: none;
+      color: #ddd;
+      font-size: 1rem;
+      cursor: pointer;
+      padding: 0 2px;
+      line-height: 1;
+      transition: color 0.15s;
+    }
+
+    button.x-btn:hover { color: #e55; }
+
+    .empty-msg { font-size: 0.88rem; color: #ccc; padding: 10px 0; }
+
     /* ── Add bar ── */
     .add-bar {
       background: #fff;
@@ -123,15 +223,6 @@
     .add-details.open { display: grid; }
     .add-details .full { grid-column: 1 / -1; }
 
-    .field-label {
-      display: block;
-      font-size: 0.67rem;
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
-      color: #bbb;
-      margin-bottom: 4px;
-    }
-
     .add-details input,
     .add-details select,
     .add-details textarea {
@@ -190,24 +281,13 @@
 
     .check-btn:hover { border-color: #7bbf7b; background: #f0faf0; }
 
-    .priority-dot {
-      width: 7px;
-      height: 7px;
-      border-radius: 50%;
-      flex-shrink: 0;
-    }
-
+    .priority-dot { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; }
     .priority-dot[data-p="urgent"] { background: #d94f4f; }
     .priority-dot[data-p="high"]   { background: #e8854a; }
     .priority-dot[data-p="medium"] { background: #d4cfc6; }
     .priority-dot[data-p="low"]    { background: #e2e0db; }
 
-    .task-text {
-      flex: 1;
-      font-size: 0.93rem;
-      line-height: 1.4;
-      color: #1c1c1c;
-    }
+    .task-text { flex: 1; font-size: 0.93rem; line-height: 1.4; color: #1c1c1c; }
 
     .due-chip {
       font-size: 0.73rem;
@@ -232,25 +312,12 @@
 
     li.task-item.expanded .chevron { transform: rotate(90deg); }
 
-    .task-detail {
-      display: none;
-      padding: 0 14px 12px;
-    }
-
+    .task-detail { display: none; padding: 0 14px 12px; }
     li.task-item.expanded .task-detail { display: block; }
 
-    .detail-divider {
-      border: none;
-      border-top: 1px solid #f0ede8;
-      margin-bottom: 10px;
-    }
+    .detail-divider { border: none; border-top: 1px solid #f0ede8; margin-bottom: 10px; }
 
-    .detail-row {
-      display: flex;
-      gap: 12px;
-      padding: 4px 0;
-      font-size: 0.84rem;
-    }
+    .detail-row { display: flex; gap: 12px; padding: 4px 0; font-size: 0.84rem; }
 
     .d-label {
       color: #c0bdb8;
@@ -266,21 +333,7 @@
 
     .task-actions { display: flex; gap: 8px; margin-top: 10px; }
 
-    button.del-btn {
-      background: none;
-      border: 1px solid #e2e0db;
-      color: #c0bdb8;
-      border-radius: 6px;
-      font-size: 0.78rem;
-      padding: 4px 12px;
-      cursor: pointer;
-      transition: all 0.15s;
-      font-family: inherit;
-    }
-
-    button.del-btn:hover { border-color: #e55; color: #e55; }
-
-    /* ── Recurring active items ── */
+    /* ── Recurring items ── */
     li.rec-item {
       background: #faf9f7;
       border: 1px solid #e8e5df;
@@ -289,12 +342,7 @@
       overflow: hidden;
     }
 
-    .rec-main {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      padding: 12px 14px;
-    }
+    .rec-main { display: flex; align-items: center; gap: 10px; padding: 12px 14px; }
 
     .rec-circle {
       width: 18px;
@@ -307,7 +355,6 @@
     }
 
     .rec-circle:hover { border-color: #888; }
-
     .rec-icon { font-size: 0.72rem; color: #d4d0c8; flex-shrink: 0; }
 
     .tag { font-size: 0.72rem; padding: 2px 7px; border-radius: 4px; flex-shrink: 0; }
@@ -323,12 +370,7 @@
 
     .rec-complete-form.open { display: block; }
 
-    .cf-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr 1fr;
-      gap: 10px;
-      margin-bottom: 10px;
-    }
+    .cf-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin-bottom: 10px; }
 
     .cf-grid input[type="date"] {
       width: 100%;
@@ -342,105 +384,6 @@
       color-scheme: light;
       font-family: inherit;
     }
-
-    /* ── Section dividers ── */
-    .section-divider {
-      border: none;
-      border-top: 1px solid #e2e0db;
-      margin: 32px 0 22px;
-    }
-
-    .section-header {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      margin-bottom: 12px;
-    }
-
-    .section-label {
-      font-size: 0.67rem;
-      letter-spacing: 0.1em;
-      text-transform: uppercase;
-      color: #c0bdb8;
-    }
-
-    button.sm-btn {
-      background: none;
-      border: 1px solid #e2e0db;
-      color: #bbb;
-      border-radius: 6px;
-      font-size: 0.78rem;
-      padding: 3px 10px;
-      cursor: pointer;
-      transition: all 0.15s;
-      font-family: inherit;
-    }
-
-    button.sm-btn:hover { border-color: #aaa; color: #666; }
-
-    /* ── Recurring section ── */
-    .add-rec-form {
-      background: #fff;
-      border: 1px solid #e2e0db;
-      border-radius: 10px;
-      padding: 14px;
-      margin-bottom: 12px;
-      display: none;
-    }
-
-    .add-rec-form.open { display: block; }
-    .add-rec-form .add-main { padding: 0 0 12px; }
-
-    .two-col {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 10px;
-      margin-bottom: 12px;
-    }
-
-    .two-col input[type="date"] {
-      width: 100%;
-      background: #f7f6f3;
-      border: 1px solid #e2e0db;
-      border-radius: 6px;
-      color: #1c1c1c;
-      font-size: 0.88rem;
-      padding: 7px 10px;
-      outline: none;
-      color-scheme: light;
-      font-family: inherit;
-    }
-
-    .form-actions { display: flex; gap: 8px; justify-content: flex-end; }
-
-    button.save-btn {
-      background: #1c1c1c;
-      color: #fff;
-      border: none;
-      border-radius: 6px;
-      font-size: 0.85rem;
-      font-weight: 500;
-      padding: 7px 16px;
-      cursor: pointer;
-      font-family: inherit;
-      transition: background 0.15s;
-    }
-
-    button.save-btn:hover { background: #333; }
-    button.save-btn.saved { background: #7bbf7b; }
-
-    button.cancel-btn {
-      background: none;
-      border: 1px solid #e2e0db;
-      color: #aaa;
-      border-radius: 6px;
-      font-size: 0.85rem;
-      padding: 7px 14px;
-      cursor: pointer;
-      font-family: inherit;
-    }
-
-    button.cancel-btn:hover { border-color: #aaa; color: #666; }
 
     ul.rec-list { list-style: none; }
 
@@ -465,32 +408,37 @@
     .t-meta .m-active { color: #7bbf7b; }
     .t-meta .m-due    { color: #e8854a; }
 
-    button.x-btn {
-      background: none;
-      border: none;
-      color: #ddd;
-      font-size: 1rem;
-      cursor: pointer;
-      padding: 0 2px;
-      line-height: 1;
-      transition: color 0.15s;
-    }
-
-    button.x-btn:hover { color: #e55; }
-
-    /* ── Wrap-up section ── */
-    .completed-count-msg {
-      font-size: 0.83rem;
-      color: #aaa;
-      margin-bottom: 14px;
-    }
-
-    .mood-row {
-      display: flex;
-      gap: 6px;
-      flex-wrap: wrap;
+    .add-rec-form {
+      background: #fff;
+      border: 1px solid #e2e0db;
+      border-radius: 10px;
+      padding: 14px;
       margin-bottom: 12px;
+      display: none;
     }
+
+    .add-rec-form.open { display: block; }
+    .add-rec-form .add-main { padding: 0 0 12px; }
+
+    .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 12px; }
+
+    .two-col input[type="date"] {
+      width: 100%;
+      background: #f7f6f3;
+      border: 1px solid #e2e0db;
+      border-radius: 6px;
+      color: #1c1c1c;
+      font-size: 0.88rem;
+      padding: 7px 10px;
+      outline: none;
+      color-scheme: light;
+      font-family: inherit;
+    }
+
+    /* ── Wrap-up ── */
+    .completed-count-msg { font-size: 0.83rem; color: #aaa; margin-bottom: 14px; }
+
+    .mood-row { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 12px; }
 
     .mood-btn {
       background: #f7f6f3;
@@ -526,7 +474,7 @@
     #recap-input:focus { border-color: #bbb; }
     #recap-input::placeholder { color: #c0bdb8; }
 
-    /* ── History tab ── */
+    /* ── History ── */
     .log-entry {
       background: #fff;
       border: 1px solid #e2e0db;
@@ -557,12 +505,7 @@
     .mood-behind  { background: #fff0e8; color: #b84a1a; }
     .mood-rough   { background: #fde8e8; color: #c0392b; }
 
-    .log-recap {
-      font-size: 0.85rem;
-      color: #666;
-      line-height: 1.5;
-      margin-bottom: 10px;
-    }
+    .log-recap { font-size: 0.85rem; color: #666; line-height: 1.5; margin-bottom: 10px; }
 
     .log-tasks { display: flex; flex-direction: column; gap: 4px; }
 
@@ -575,10 +518,195 @@
     }
 
     .log-task::before { content: '✓'; font-size: 0.72rem; color: #bbb; flex-shrink: 0; }
-
     .log-no-tasks { font-size: 0.82rem; color: #d4d0c8; }
 
-    .empty-msg { font-size: 0.88rem; color: #ccc; padding: 10px 0; }
+    /* ── Learn tab ── */
+    .learn-topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 16px;
+    }
+
+    .learn-filters { display: flex; gap: 6px; }
+
+    .topic-card {
+      background: #fff;
+      border: 1px solid #e2e0db;
+      border-radius: 10px;
+      margin-bottom: 8px;
+      overflow: hidden;
+      transition: box-shadow 0.15s;
+    }
+
+    .topic-card:hover { box-shadow: 0 1px 4px rgba(0,0,0,0.06); }
+    .topic-card.mastered { opacity: 0.55; }
+
+    .topic-header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 13px 14px;
+      cursor: pointer;
+      user-select: none;
+    }
+
+    .topic-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+    .topic-dot.active   { background: #7bbf7b; }
+    .topic-dot.mastered { background: #d4d0c8; }
+
+    .topic-title { flex: 1; font-size: 0.93rem; font-weight: 500; color: #1c1c1c; }
+    .topic-card.mastered .topic-title { color: #aaa; }
+
+    .topic-touched { font-size: 0.73rem; color: #c0bdb8; flex-shrink: 0; }
+
+    .topic-chevron {
+      font-size: 0.8rem;
+      color: #d4d0c8;
+      flex-shrink: 0;
+      transition: transform 0.18s;
+      line-height: 1;
+    }
+
+    .topic-card.expanded .topic-chevron { transform: rotate(90deg); }
+
+    .topic-body { display: none; }
+    .topic-card.expanded .topic-body { display: block; }
+
+    .topic-desc {
+      font-size: 0.84rem;
+      color: #888;
+      line-height: 1.5;
+      padding: 0 14px 14px;
+      border-bottom: 1px solid #f0ede8;
+    }
+
+    .learn-section { padding: 12px 14px; border-bottom: 1px solid #f0ede8; }
+    .learn-section:last-child { border-bottom: none; }
+
+    .learn-section-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 8px;
+    }
+
+    .learn-section-label {
+      font-size: 0.67rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: #c0bdb8;
+    }
+
+    /* Notes */
+    .note-item {
+      display: flex;
+      gap: 10px;
+      padding: 6px 0;
+      border-bottom: 1px solid #f7f6f3;
+      align-items: flex-start;
+    }
+
+    .note-item:last-child { border-bottom: none; }
+
+    .note-date {
+      font-size: 0.72rem;
+      color: #c0bdb8;
+      flex-shrink: 0;
+      width: 52px;
+      padding-top: 2px;
+    }
+
+    .note-text { flex: 1; font-size: 0.85rem; color: #555; line-height: 1.5; }
+
+    .add-note-form { display: none; margin-top: 8px; }
+    .add-note-form.open { display: block; }
+
+    .add-note-form textarea,
+    .add-resource-form input,
+    .add-topic-form input,
+    .add-topic-form textarea {
+      width: 100%;
+      background: #f7f6f3;
+      border: 1px solid #e2e0db;
+      border-radius: 6px;
+      color: #1c1c1c;
+      font-size: 0.88rem;
+      font-family: inherit;
+      padding: 8px 10px;
+      outline: none;
+      transition: border-color 0.15s;
+      margin-bottom: 8px;
+    }
+
+    .add-note-form textarea:focus,
+    .add-resource-form input:focus,
+    .add-topic-form input:focus,
+    .add-topic-form textarea:focus { border-color: #bbb; background: #fff; }
+
+    .add-note-form textarea { resize: vertical; min-height: 64px; }
+    .add-topic-form textarea { resize: vertical; min-height: 56px; }
+
+    /* Resources */
+    .resource-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 5px 0;
+      border-bottom: 1px solid #f7f6f3;
+    }
+
+    .resource-item:last-child { border-bottom: none; }
+
+    .resource-link {
+      flex: 1;
+      font-size: 0.85rem;
+      color: #2563eb;
+      text-decoration: none;
+    }
+
+    .resource-link:hover { text-decoration: underline; }
+    .resource-label { flex: 1; font-size: 0.85rem; color: #555; }
+
+    .resource-note { font-size: 0.78rem; color: #aaa; margin-left: 4px; }
+
+    .add-resource-form { display: none; margin-top: 8px; }
+    .add-resource-form.open { display: block; }
+
+    /* Add topic form */
+    .add-topic-form {
+      background: #fff;
+      border: 1px solid #e2e0db;
+      border-radius: 10px;
+      padding: 14px;
+      margin-bottom: 16px;
+      display: none;
+    }
+
+    .add-topic-form.open { display: block; }
+
+    /* Topic footer actions */
+    .topic-footer {
+      padding: 10px 14px;
+      display: flex;
+      gap: 8px;
+    }
+
+    button.master-btn {
+      background: none;
+      border: 1px solid #e2e0db;
+      color: #7bbf7b;
+      border-radius: 6px;
+      font-size: 0.78rem;
+      padding: 4px 12px;
+      cursor: pointer;
+      transition: all 0.15s;
+      font-family: inherit;
+    }
+
+    button.master-btn:hover { background: #f0faf0; border-color: #7bbf7b; }
+    button.unmaster-btn { color: #aaa; }
+    button.unmaster-btn:hover { color: #888; background: #f7f6f3; border-color: #bbb; }
   </style>
 </head>
 <body>
@@ -586,12 +714,13 @@
     <div class="top-bar">
       <h1>To-Do</h1>
       <div class="tab-bar">
-        <button class="tab active" id="tab-today-btn" onclick="switchTab('today')">Today</button>
-        <button class="tab" id="tab-history-btn" onclick="switchTab('history')">History</button>
+        <button class="tab active" id="tab-today-btn"   onclick="switchTab('today')">Today</button>
+        <button class="tab"        id="tab-history-btn" onclick="switchTab('history')">History</button>
+        <button class="tab"        id="tab-learn-btn"   onclick="switchTab('learn')">Learn</button>
       </div>
     </div>
 
-    <!-- TODAY PANEL -->
+    <!-- TODAY -->
     <div id="panel-today">
       <div class="add-bar">
         <div class="add-main">
@@ -638,14 +767,8 @@
           <input class="headline-input" id="new-rec-text" type="text" placeholder="Task name…" autocomplete="off" />
         </div>
         <div class="two-col">
-          <div>
-            <span class="field-label">Snooze until</span>
-            <input type="date" id="new-rec-snooze" />
-          </div>
-          <div>
-            <span class="field-label">Must do by</span>
-            <input type="date" id="new-rec-mustdo" />
-          </div>
+          <div><span class="field-label">Snooze until</span><input type="date" id="new-rec-snooze" /></div>
+          <div><span class="field-label">Must do by</span><input type="date" id="new-rec-mustdo" /></div>
         </div>
         <div class="form-actions">
           <button class="cancel-btn" onclick="toggleAddRec()">Cancel</button>
@@ -664,11 +787,11 @@
       <p class="completed-count-msg" id="completed-count-msg"></p>
 
       <div class="mood-row">
-        <button class="mood-btn" data-mood="Crushed it" onclick="selectMood(this)">Crushed it</button>
-        <button class="mood-btn" data-mood="Solid day"  onclick="selectMood(this)">Solid day</button>
-        <button class="mood-btn" data-mood="Mixed bag"  onclick="selectMood(this)">Mixed bag</button>
+        <button class="mood-btn" data-mood="Crushed it"  onclick="selectMood(this)">Crushed it</button>
+        <button class="mood-btn" data-mood="Solid day"   onclick="selectMood(this)">Solid day</button>
+        <button class="mood-btn" data-mood="Mixed bag"   onclick="selectMood(this)">Mixed bag</button>
         <button class="mood-btn" data-mood="Fell behind" onclick="selectMood(this)">Fell behind</button>
-        <button class="mood-btn" data-mood="Rough one"  onclick="selectMood(this)">Rough one</button>
+        <button class="mood-btn" data-mood="Rough one"   onclick="selectMood(this)">Rough one</button>
       </div>
 
       <textarea id="recap-input" placeholder="Anything worth noting about today…"></textarea>
@@ -678,15 +801,40 @@
       </div>
     </div>
 
-    <!-- HISTORY PANEL -->
+    <!-- HISTORY -->
     <div id="panel-history" style="display:none">
       <div id="history-content"></div>
+    </div>
+
+    <!-- LEARN -->
+    <div id="panel-learn" style="display:none">
+      <div class="learn-topbar">
+        <span class="section-label">Knowledge &amp; Learning</span>
+        <div class="learn-filters">
+          <button class="sm-btn" id="show-mastered-btn" onclick="toggleShowMastered()">Show mastered</button>
+          <button class="sm-btn" onclick="toggleAddTopic()">+ Add topic</button>
+        </div>
+      </div>
+
+      <div class="add-topic-form" id="add-topic-form">
+        <span class="field-label" style="margin-bottom:8px;display:block;">New topic</span>
+        <input type="text" id="new-topic-title" placeholder="Topic name…" autocomplete="off" />
+        <textarea id="new-topic-desc" placeholder="Context or description (optional)…"></textarea>
+        <textarea id="new-topic-note" placeholder="First note (optional)…"></textarea>
+        <div class="form-actions">
+          <button class="cancel-btn" onclick="toggleAddTopic()">Cancel</button>
+          <button class="save-btn" onclick="addTopic()">Add</button>
+        </div>
+      </div>
+
+      <div id="learn-list"></div>
     </div>
   </div>
 
   <script>
     const KEY = 'andie-todos-v2';
     let selectedMood = null;
+    let showMastered = false;
 
     const MOOD_CLASS = {
       'Crushed it': 'mood-crushed',
@@ -696,15 +844,18 @@
       'Rough one':  'mood-rough',
     };
 
+    // ── Storage ─────────────────────────────────────────
+
     function load() {
       try {
         const d = JSON.parse(localStorage.getItem(KEY));
         if (d && Array.isArray(d.todos)) {
-          if (!d.log) d.log = [];
+          if (!d.log)   d.log = [];
+          if (!d.learn) d.learn = [];
           return d;
         }
       } catch {}
-      return { todos: [], recurring: [], log: [] };
+      return { todos: [], recurring: [], log: [], learn: [] };
     }
 
     function save(d) { localStorage.setItem(KEY, JSON.stringify(d)); }
@@ -720,6 +871,16 @@
     function fmt(s) {
       if (!s) return '';
       return new Date(s + 'T00:00:00').toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+    }
+
+    function fmtRelative(s) {
+      if (!s) return '';
+      const t = today();
+      if (s === t) return 'Today';
+      const diff = Math.round((new Date(t + 'T00:00:00') - new Date(s + 'T00:00:00')) / 86400000);
+      if (diff === 1) return 'Yesterday';
+      if (diff < 7)  return diff + 'd ago';
+      return fmt(s);
     }
 
     function fmtDue(s) {
@@ -739,14 +900,15 @@
     function isDue(r)    { return r.mustDoBy && r.mustDoBy <= today(); }
     function isSoon(r)   { return r.mustDoBy && r.mustDoBy > today() && addDays(3) >= r.mustDoBy; }
 
-    // ── Tab switching ─────────────────────────────────────
+    // ── Tab switching ────────────────────────────────────
 
     function switchTab(tab) {
-      document.getElementById('panel-today').style.display   = tab === 'today'   ? '' : 'none';
-      document.getElementById('panel-history').style.display = tab === 'history' ? '' : 'none';
-      document.getElementById('tab-today-btn').classList.toggle('active',   tab === 'today');
-      document.getElementById('tab-history-btn').classList.toggle('active', tab === 'history');
+      ['today','history','learn'].forEach(t => {
+        document.getElementById('panel-' + t).style.display = t === tab ? '' : 'none';
+        document.getElementById('tab-' + t + '-btn').classList.toggle('active', t === tab);
+      });
       if (tab === 'history') renderHistory();
+      if (tab === 'learn')   renderLearn();
     }
 
     // ── Render ───────────────────────────────────────────
@@ -829,6 +991,31 @@
       }
 
       log.forEach(entry => container.appendChild(makeLogEntry(entry)));
+    }
+
+    function renderLearn() {
+      const data = load();
+      const container = document.getElementById('learn-list');
+      container.innerHTML = '';
+
+      let topics = data.learn;
+      if (!showMastered) topics = topics.filter(t => t.status !== 'mastered');
+
+      const active   = topics.filter(t => t.status !== 'mastered')
+                              .sort((a,b) => (b.lastTouched||'') > (a.lastTouched||'') ? 1 : -1);
+      const mastered = topics.filter(t => t.status === 'mastered')
+                              .sort((a,b) => (b.lastTouched||'') > (a.lastTouched||'') ? 1 : -1);
+
+      if (!active.length && !mastered.length) {
+        const msg = document.createElement('p');
+        msg.className = 'empty-msg';
+        msg.textContent = 'No topics yet. Add one to start tracking your learning.';
+        container.appendChild(msg);
+        return;
+      }
+
+      active.forEach(t   => container.appendChild(makeTopicCard(t)));
+      mastered.forEach(t => container.appendChild(makeTopicCard(t)));
     }
 
     // ── Item builders ────────────────────────────────────
@@ -989,6 +1176,169 @@
       return li;
     }
 
+    function makeTopicCard(topic) {
+      const card = document.createElement('div');
+      card.className = 'topic-card' + (topic.status === 'mastered' ? ' mastered' : '');
+      card.dataset.id = topic.id;
+
+      // Header
+      const header = document.createElement('div');
+      header.className = 'topic-header';
+      header.onclick = () => {
+        card.classList.toggle('expanded');
+        if (card.classList.contains('expanded')) renderTopicBody(topic.id, card);
+      };
+
+      const dot = document.createElement('span');
+      dot.className = 'topic-dot ' + (topic.status === 'mastered' ? 'mastered' : 'active');
+
+      const title = document.createElement('span');
+      title.className = 'topic-title';
+      title.textContent = topic.title;
+
+      const touched = document.createElement('span');
+      touched.className = 'topic-touched';
+      touched.textContent = topic.lastTouched ? fmtRelative(topic.lastTouched) : 'Never';
+
+      const chevron = document.createElement('span');
+      chevron.className = 'topic-chevron';
+      chevron.textContent = '›';
+
+      header.append(dot, title, touched, chevron);
+
+      // Body placeholder (filled on expand)
+      const body = document.createElement('div');
+      body.className = 'topic-body';
+
+      card.append(header, body);
+      return card;
+    }
+
+    function renderTopicBody(id, card) {
+      const data = load();
+      const topic = data.learn.find(t => t.id === id);
+      if (!topic) return;
+
+      const body = card.querySelector('.topic-body');
+      body.innerHTML = '';
+
+      // Description
+      if (topic.description) {
+        const desc = document.createElement('p');
+        desc.className = 'topic-desc';
+        desc.textContent = topic.description;
+        body.appendChild(desc);
+      }
+
+      // Notes section
+      const notesSection = document.createElement('div');
+      notesSection.className = 'learn-section';
+
+      const notesHeader = document.createElement('div');
+      notesHeader.className = 'learn-section-header';
+      notesHeader.innerHTML = `<span class="learn-section-label">Notes</span>`;
+      const addNoteBtn = document.createElement('button');
+      addNoteBtn.className = 'sm-btn';
+      addNoteBtn.textContent = '+ Add';
+      addNoteBtn.onclick = () => noteForm.classList.toggle('open');
+      notesHeader.appendChild(addNoteBtn);
+      notesSection.appendChild(notesHeader);
+
+      const noteForm = document.createElement('div');
+      noteForm.className = 'add-note-form';
+      noteForm.innerHTML = `
+        <textarea id="note-input-${id}" placeholder="What did you learn or do?"></textarea>
+        <div class="form-actions">
+          <button class="cancel-btn" onclick="this.closest('.add-note-form').classList.remove('open')">Cancel</button>
+          <button class="save-btn" onclick="addNote(${id})">Add note</button>
+        </div>`;
+      notesSection.appendChild(noteForm);
+
+      const notes = (topic.notes || []).slice().reverse();
+      if (notes.length) {
+        notes.forEach(note => {
+          const item = document.createElement('div');
+          item.className = 'note-item';
+          item.innerHTML = `
+            <span class="note-date">${fmt(note.date)}</span>
+            <span class="note-text">${escHtml(note.text)}</span>
+            <button class="x-btn" onclick="deleteNote(${id}, ${note.id})">×</button>`;
+          notesSection.appendChild(item);
+        });
+      } else {
+        const none = document.createElement('p');
+        none.style.cssText = 'font-size:0.82rem;color:#ccc;padding:4px 0;';
+        none.textContent = 'No notes yet.';
+        notesSection.appendChild(none);
+      }
+
+      body.appendChild(notesSection);
+
+      // Resources section
+      const resSection = document.createElement('div');
+      resSection.className = 'learn-section';
+
+      const resHeader = document.createElement('div');
+      resHeader.className = 'learn-section-header';
+      resHeader.innerHTML = `<span class="learn-section-label">Resources</span>`;
+      const addResBtn = document.createElement('button');
+      addResBtn.className = 'sm-btn';
+      addResBtn.textContent = '+ Add';
+      addResBtn.onclick = () => resForm.classList.toggle('open');
+      resHeader.appendChild(addResBtn);
+      resSection.appendChild(resHeader);
+
+      const resForm = document.createElement('div');
+      resForm.className = 'add-resource-form';
+      resForm.innerHTML = `
+        <input type="text" id="res-label-${id}" placeholder="Label (e.g. GitHub Docs)" />
+        <input type="text" id="res-url-${id}" placeholder="URL (optional)" />
+        <input type="text" id="res-note-${id}" placeholder="Note (optional)" />
+        <div class="form-actions">
+          <button class="cancel-btn" onclick="this.closest('.add-resource-form').classList.remove('open')">Cancel</button>
+          <button class="save-btn" onclick="addResource(${id})">Add</button>
+        </div>`;
+      resSection.appendChild(resForm);
+
+      const resources = topic.resources || [];
+      if (resources.length) {
+        resources.forEach(res => {
+          const item = document.createElement('div');
+          item.className = 'resource-item';
+          const label = res.url
+            ? `<a class="resource-link" href="${escAttr(res.url)}" target="_blank" rel="noopener">${escHtml(res.label || res.url)}</a>`
+            : `<span class="resource-label">${escHtml(res.label)}</span>`;
+          item.innerHTML = `${label}${res.note ? `<span class="resource-note">— ${escHtml(res.note)}</span>` : ''}
+            <button class="x-btn" onclick="deleteResource(${id}, ${res.id})">×</button>`;
+          resSection.appendChild(item);
+        });
+      } else {
+        const none = document.createElement('p');
+        none.style.cssText = 'font-size:0.82rem;color:#ccc;padding:4px 0;';
+        none.textContent = 'No resources yet.';
+        resSection.appendChild(none);
+      }
+
+      body.appendChild(resSection);
+
+      // Footer actions
+      const footer = document.createElement('div');
+      footer.className = 'topic-footer';
+
+      const masterBtn = document.createElement('button');
+      masterBtn.className = topic.status === 'mastered' ? 'master-btn unmaster-btn' : 'master-btn';
+      masterBtn.textContent = topic.status === 'mastered' ? 'Unmark mastered' : 'Mark mastered';
+      masterBtn.onclick = () => toggleMastered(id);
+
+      const delBtn = document.createElement('button');
+      delBtn.className = 'del-btn';
+      delBtn.textContent = 'Delete topic';
+      delBtn.onclick = () => deleteTopic(id);
+
+      footer.append(masterBtn, delBtn);
+      body.appendChild(footer);
+    }
+
     function makeLogEntry(entry) {
       const div = document.createElement('div');
       div.className = 'log-entry';
@@ -1039,7 +1389,7 @@
       return div;
     }
 
-    // ── Actions ─────────────────────────────────────────
+    // ── Today actions ───────────────────────────────────
 
     function addTodo() {
       const input = document.getElementById('new-todo');
@@ -1154,27 +1504,191 @@
       render();
     }
 
-    // ── Seed ────────────────────────────────────────────
+    // ── Learn actions ────────────────────────────────────
 
-    function seedIfNeeded() {
+    function toggleAddTopic() {
+      const form = document.getElementById('add-topic-form');
+      form.classList.toggle('open');
+      if (form.classList.contains('open')) document.getElementById('new-topic-title').focus();
+    }
+
+    function toggleShowMastered() {
+      showMastered = !showMastered;
+      const btn = document.getElementById('show-mastered-btn');
+      btn.textContent = showMastered ? 'Hide mastered' : 'Show mastered';
+      renderLearn();
+    }
+
+    function addTopic() {
+      const title = document.getElementById('new-topic-title').value.trim();
+      if (!title) return;
+
+      const desc  = document.getElementById('new-topic-desc').value.trim();
+      const note  = document.getElementById('new-topic-note').value.trim();
+      const now   = Date.now();
+      const t     = today();
+
+      const topic = {
+        id: now, title, description: desc || null,
+        status: 'active', resources: [],
+        notes: note ? [{ id: now + 1, date: t, text: note }] : [],
+        lastTouched: note ? t : null,
+        createdAt: t,
+      };
+
       const data = load();
-      if (data.seeded) return;
+      data.learn.push(topic);
+      save(data);
+
+      document.getElementById('new-topic-title').value = '';
+      document.getElementById('new-topic-desc').value  = '';
+      document.getElementById('new-topic-note').value  = '';
+      document.getElementById('add-topic-form').classList.remove('open');
+      renderLearn();
+    }
+
+    function addNote(topicId) {
+      const input = document.getElementById('note-input-' + topicId);
+      const text = input?.value.trim();
+      if (!text) return;
+
+      const data = load();
+      const topic = data.learn.find(t => t.id === topicId);
+      if (!topic) return;
+
+      const t = today();
+      topic.notes.push({ id: Date.now(), date: t, text });
+      topic.lastTouched = t;
+      save(data);
+
+      const card = document.querySelector(`.topic-card[data-id="${topicId}"]`);
+      if (card) renderTopicBody(topicId, card);
+    }
+
+    function deleteNote(topicId, noteId) {
+      const data = load();
+      const topic = data.learn.find(t => t.id === topicId);
+      if (topic) topic.notes = topic.notes.filter(n => n.id !== noteId);
+      save(data);
+      const card = document.querySelector(`.topic-card[data-id="${topicId}"]`);
+      if (card) renderTopicBody(topicId, card);
+    }
+
+    function addResource(topicId) {
+      const label = document.getElementById('res-label-' + topicId)?.value.trim();
+      const url   = document.getElementById('res-url-' + topicId)?.value.trim();
+      const note  = document.getElementById('res-note-' + topicId)?.value.trim();
+      if (!label && !url) return;
+
+      const data = load();
+      const topic = data.learn.find(t => t.id === topicId);
+      if (!topic) return;
+
+      const t = today();
+      topic.resources.push({ id: Date.now(), label: label || url, url: url || null, note: note || null });
+      topic.lastTouched = t;
+      save(data);
+
+      const card = document.querySelector(`.topic-card[data-id="${topicId}"]`);
+      if (card) renderTopicBody(topicId, card);
+    }
+
+    function deleteResource(topicId, resId) {
+      const data = load();
+      const topic = data.learn.find(t => t.id === topicId);
+      if (topic) topic.resources = topic.resources.filter(r => r.id !== resId);
+      save(data);
+      const card = document.querySelector(`.topic-card[data-id="${topicId}"]`);
+      if (card) renderTopicBody(topicId, card);
+    }
+
+    function toggleMastered(topicId) {
+      const data = load();
+      const topic = data.learn.find(t => t.id === topicId);
+      if (topic) topic.status = topic.status === 'mastered' ? 'active' : 'mastered';
+      save(data);
+      renderLearn();
+    }
+
+    function deleteTopic(topicId) {
+      const data = load();
+      data.learn = data.learn.filter(t => t.id !== topicId);
+      save(data);
+      renderLearn();
+    }
+
+    // ── Helpers ─────────────────────────────────────────
+
+    function escHtml(s) {
+      return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+    }
+
+    function escAttr(s) { return escHtml(s); }
+
+    function extractTitle(text) {
+      return text.split(' – ')[0].split(' (')[0].trim();
+    }
+
+    // ── Seed & migrate ───────────────────────────────────
+
+    const KNOWLEDGE_GAP_PATTERNS = ['GitHub','DBT','AI infrastructure','Ops OS literacy','Claude managed agents','Command center in Claude Code'];
+
+    function seedAndMigrate() {
+      const data = load();
       const now = Date.now();
-      [
-        'Wed EOD (hard): VIP Slack workflow – solo brainstorm + build + test',
-        'End of week: Mima – net zero + daily evals',
-        'End of week: Coach – daily evals',
-        'End of week: Darrell Younger hypothesis-check with Coco',
-      ].forEach((text, i) => data.todos.push({ id: now + i, text, done: false, priority: 'medium', due: null, category: null, context: null }));
-      [
-        'GitHub – primer → Q&A conversation → quiz (concepts, workflows, spot gaps, eventually contribute to structure)',
-        'DBT & DBT modeling – same learning arc (prove you can hang with analytical engineering without becoming one)',
-        'AI infrastructure & service account value prop – where things are hosted, strands, local vs shared, how GitHub fits in, why Snowflake service account matters',
-        "Ops OS literacy (Matt Hardy & Annie's build)",
-        'Claude managed agents & Claude tag',
-        'Command center in Claude Code – build + refine',
-      ].forEach((text, i) => data.recurring.push({ id: now + 100 + i, text, snoozeUntil: null, mustDoBy: null, lastCompleted: null }));
-      data.seeded = true;
+
+      // Seed one-off todos
+      if (!data.seeded) {
+        [
+          'Wed EOD (hard): VIP Slack workflow – solo brainstorm + build + test',
+          'End of week: Mima – net zero + daily evals',
+          'End of week: Coach – daily evals',
+          'End of week: Darrell Younger hypothesis-check with Coco',
+        ].forEach((text, i) => data.todos.push({ id: now + i, text, done: false, priority: 'medium', due: null, category: null, context: null }));
+        data.seeded = true;
+      }
+
+      // Migrate knowledge gaps from recurring → learn
+      if (!data.learnSeeded) {
+        if (!data.learn) data.learn = [];
+
+        const toMigrate = [];
+        data.recurring = data.recurring.filter(r => {
+          const isGap = KNOWLEDGE_GAP_PATTERNS.some(p => r.text.startsWith(p));
+          if (isGap) toMigrate.push(r);
+          return !isGap;
+        });
+
+        toMigrate.forEach((r, i) => {
+          data.learn.push({
+            id: now + 200 + i,
+            title: extractTitle(r.text),
+            description: r.text,
+            status: 'active',
+            resources: [],
+            notes: [],
+            lastTouched: null,
+            createdAt: today(),
+          });
+        });
+
+        // Seed learn topics if none were migrated
+        if (!toMigrate.length && !data.learn.length) {
+          [
+            ['GitHub', 'Primer → Q&A conversation → quiz (concepts, workflows, spot gaps, eventually contribute to structure)'],
+            ['DBT & DBT modeling', 'Same learning arc as GitHub (prove you can hang with analytical engineering without becoming one)'],
+            ['AI infrastructure & service account value prop', 'Where things are hosted, strands, local vs shared, how GitHub fits in, why Snowflake service account matters'],
+            ['Ops OS literacy', "Matt Hardy & Annie's build — understand the operational OS being built"],
+            ['Claude managed agents & Claude tag', 'How Claude managed agents work and what the Claude tag means in practice'],
+            ['Command center in Claude Code', 'Building and refining this personal command center with Claude Code'],
+          ].forEach(([title, description], i) => {
+            data.learn.push({ id: now + 300 + i, title, description, status: 'active', resources: [], notes: [], lastTouched: null, createdAt: today() });
+          });
+        }
+
+        data.learnSeeded = true;
+      }
+
       save(data);
     }
 
@@ -1182,8 +1696,9 @@
 
     document.getElementById('new-todo').addEventListener('keydown', e => { if (e.key === 'Enter') addTodo(); });
     document.getElementById('new-rec-text').addEventListener('keydown', e => { if (e.key === 'Enter') addRecurring(); });
+    document.getElementById('new-topic-title').addEventListener('keydown', e => { if (e.key === 'Enter') addTopic(); });
 
-    seedIfNeeded();
+    seedAndMigrate();
     render();
   </script>
 </body>
