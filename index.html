@@ -4,6 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Andie's To-Dos</title>
+  <script src="https://accounts.google.com/gsi/client" async></script>
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -729,6 +730,173 @@
     button.master-btn:hover { background: #f0faf0; border-color: #7bbf7b; }
     button.unmaster-btn { color: #aaa; }
     button.unmaster-btn:hover { color: #888; background: #f7f6f3; border-color: #bbb; }
+
+    /* ── Google Calendar card ── */
+    .gcal-connect-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: #fff;
+      border: 1px solid #e2e0db;
+      border-radius: 10px;
+      padding: 10px 14px;
+      margin-bottom: 12px;
+      font-size: 0.83rem;
+      color: #aaa;
+    }
+
+    .gcal-setup-card {
+      background: #fff;
+      border: 1px solid #e2e0db;
+      border-radius: 10px;
+      padding: 16px;
+      margin-bottom: 12px;
+    }
+
+    .gcal-setup-card h3 {
+      font-size: 0.88rem;
+      font-weight: 600;
+      color: #1c1c1c;
+      margin-bottom: 12px;
+    }
+
+    .gcal-steps {
+      font-size: 0.82rem;
+      color: #666;
+      line-height: 1.7;
+      margin-bottom: 14px;
+      padding-left: 4px;
+    }
+
+    .gcal-steps ol {
+      padding-left: 18px;
+    }
+
+    .gcal-steps code {
+      background: #f0ede8;
+      border-radius: 3px;
+      padding: 1px 5px;
+      font-size: 0.8rem;
+      font-family: ui-monospace, "SF Mono", monospace;
+      color: #555;
+    }
+
+    .gcal-setup-card input[type="text"] {
+      width: 100%;
+      background: #f7f6f3;
+      border: 1px solid #e2e0db;
+      border-radius: 6px;
+      color: #1c1c1c;
+      font-size: 0.88rem;
+      font-family: inherit;
+      padding: 8px 10px;
+      outline: none;
+      transition: border-color 0.15s;
+      margin-bottom: 10px;
+    }
+
+    .gcal-setup-card input[type="text"]:focus { border-color: #bbb; background: #fff; }
+
+    .gcal-card {
+      background: #fff;
+      border: 1px solid #e2e0db;
+      border-radius: 10px;
+      padding: 14px;
+      margin-bottom: 12px;
+    }
+
+    .gcal-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 6px;
+    }
+
+    .gcal-date {
+      font-size: 0.82rem;
+      font-weight: 500;
+      color: #555;
+    }
+
+    .gcal-meta {
+      font-size: 0.82rem;
+      color: #aaa;
+      margin-bottom: 8px;
+    }
+
+    .gcal-toggle {
+      background: none;
+      border: none;
+      font-size: 0.82rem;
+      color: #aaa;
+      cursor: pointer;
+      padding: 0;
+      font-family: inherit;
+      transition: color 0.15s;
+    }
+
+    .gcal-toggle:hover { color: #555; }
+
+    .gcal-meetings {
+      display: none;
+      margin-top: 8px;
+      border-top: 1px solid #f0ede8;
+      padding-top: 8px;
+    }
+
+    .gcal-meetings.open { display: block; }
+
+    .gcal-meeting-item {
+      display: flex;
+      align-items: baseline;
+      gap: 8px;
+      padding: 3px 0;
+      font-size: 0.85rem;
+      color: #666;
+    }
+
+    .gcal-meeting-time {
+      font-size: 0.78rem;
+      color: #bbb;
+      flex-shrink: 0;
+      min-width: 90px;
+    }
+
+    .gcal-warning {
+      background: #fff7e8;
+      border: 1px solid #f0d090;
+      border-radius: 7px;
+      padding: 8px 12px;
+      font-size: 0.82rem;
+      color: #92600a;
+      margin-top: 10px;
+      line-height: 1.5;
+    }
+
+    .gcal-no-meetings {
+      font-size: 0.83rem;
+      color: #aaa;
+      font-style: italic;
+    }
+
+    .gcal-header-actions {
+      display: flex;
+      gap: 6px;
+      align-items: center;
+    }
+
+    .gcal-reconnect-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: #fff;
+      border: 1px solid #e2e0db;
+      border-radius: 10px;
+      padding: 10px 14px;
+      margin-bottom: 12px;
+      font-size: 0.83rem;
+      color: #aaa;
+    }
   </style>
 </head>
 <body>
@@ -744,6 +912,8 @@
 
     <!-- TODAY -->
     <div id="panel-today">
+      <div id="gcal-section"></div>
+
       <div class="add-bar">
         <div class="add-main">
           <input class="headline-input" id="new-todo" type="text" placeholder="Add a task…" autocomplete="off" />
@@ -930,6 +1100,7 @@
         document.getElementById('panel-' + t).style.display = t === tab ? '' : 'none';
         document.getElementById('tab-' + t + '-btn').classList.toggle('active', t === tab);
       });
+      if (tab === 'today')   renderCalSection();
       if (tab === 'history') renderHistory();
       if (tab === 'learn')   renderLearn();
     }
@@ -940,6 +1111,7 @@
       renderActive();
       renderRecurringList();
       renderWrapup();
+      renderCalSection();
     }
 
     function renderActive() {
@@ -1704,6 +1876,276 @@
       data.learn = data.learn.filter(t => t.id !== topicId);
       save(data);
       renderLearn();
+    }
+
+    // ── Google Calendar ──────────────────────────────────
+
+    const GCAL_CLIENT_ID_KEY  = 'gcal_client_id';
+    const GCAL_TOKEN_KEY      = 'gcal_token';
+    const GCAL_TOKEN_EXPIRY   = 'gcal_token_expiry';
+    const GCAL_SCOPE          = 'https://www.googleapis.com/auth/calendar.events.readonly';
+
+    let gcalEvents       = null;  // null = not fetched yet, [] = fetched (may be empty)
+    let gcalMeetingsOpen = false;
+    let gcalTokenClient  = null;
+
+    function gcalClientId()  { return localStorage.getItem(GCAL_CLIENT_ID_KEY); }
+    function gcalToken()     { return localStorage.getItem(GCAL_TOKEN_KEY); }
+    function gcalTokenValid() {
+      const expiry = parseInt(localStorage.getItem(GCAL_TOKEN_EXPIRY) || '0', 10);
+      return gcalToken() && Date.now() < expiry;
+    }
+
+    function gcalSaveToken(token, expiresIn) {
+      localStorage.setItem(GCAL_TOKEN_KEY, token);
+      localStorage.setItem(GCAL_TOKEN_EXPIRY, String(Date.now() + (expiresIn - 60) * 1000));
+    }
+
+    function disconnectCalendar() {
+      localStorage.removeItem(GCAL_CLIENT_ID_KEY);
+      localStorage.removeItem(GCAL_TOKEN_KEY);
+      localStorage.removeItem(GCAL_TOKEN_EXPIRY);
+      gcalEvents = null;
+      gcalTokenClient = null;
+      renderCalSection();
+    }
+
+    function renderCalSection() {
+      const sec = document.getElementById('gcal-section');
+      if (!sec) return;
+
+      const clientId = gcalClientId();
+
+      if (!clientId) {
+        sec.innerHTML = '';
+        const bar = document.createElement('div');
+        bar.className = 'gcal-connect-bar';
+        bar.innerHTML = `<span>Connect Google Calendar to see today's meetings</span>
+          <button class="sm-btn" onclick="showCalSetup()">Connect</button>`;
+        sec.appendChild(bar);
+        return;
+      }
+
+      if (!gcalTokenValid()) {
+        sec.innerHTML = '';
+        const bar = document.createElement('div');
+        bar.className = 'gcal-reconnect-bar';
+        bar.innerHTML = `<span>Calendar <span style="color:#c0bdb8">(reconnect to refresh)</span></span>
+          <button class="sm-btn" onclick="gcalConnect()">Reconnect</button>`;
+        sec.appendChild(bar);
+        return;
+      }
+
+      // Token valid — show card (fetch if needed)
+      if (gcalEvents === null) {
+        gcalFetchEvents();
+        return; // renderCalSection will be called again after fetch
+      }
+
+      renderCalCard(sec);
+    }
+
+    function renderCalCard(sec) {
+      sec.innerHTML = '';
+      const card = document.createElement('div');
+      card.className = 'gcal-card';
+
+      const now = new Date();
+      const dateStr = now.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' });
+
+      // Filter to timed events only (not all-day)
+      const timedEvents = (gcalEvents || []).filter(e => e.start && e.start.dateTime);
+      const meetingCount = timedEvents.length;
+      const totalMs = timedEvents.reduce((sum, e) => {
+        const start = new Date(e.start.dateTime);
+        const end   = new Date(e.end.dateTime);
+        return sum + (end - start);
+      }, 0);
+      const totalHrs = Math.round((totalMs / 3600000) * 10) / 10;
+
+      const activeTasks = load().todos.filter(t => !t.done).length;
+
+      // Header
+      const header = document.createElement('div');
+      header.className = 'gcal-header';
+      header.innerHTML = `<span class="gcal-date">${dateStr}</span>`;
+
+      const actions = document.createElement('div');
+      actions.className = 'gcal-header-actions';
+
+      const refreshBtn = document.createElement('button');
+      refreshBtn.className = 'sm-btn';
+      refreshBtn.textContent = 'Refresh';
+      refreshBtn.onclick = () => { gcalEvents = null; gcalFetchEvents(); };
+
+      const discBtn = document.createElement('button');
+      discBtn.className = 'sm-btn';
+      discBtn.textContent = 'Disconnect';
+      discBtn.onclick = disconnectCalendar;
+
+      actions.append(refreshBtn, discBtn);
+      header.appendChild(actions);
+      card.appendChild(header);
+
+      // Meta
+      const meta = document.createElement('div');
+      meta.className = 'gcal-meta';
+      if (meetingCount === 0) {
+        meta.innerHTML = `<span class="gcal-no-meetings">No meetings today — good day for deep work.</span>`;
+      } else {
+        const hrsLabel = totalHrs === 1 ? '1 hr' : totalHrs + ' hrs';
+        meta.innerHTML = `${meetingCount} meeting${meetingCount !== 1 ? 's' : ''} &middot; ${hrsLabel}`;
+
+        // Toggle button
+        const toggle = document.createElement('button');
+        toggle.className = 'gcal-toggle';
+        toggle.textContent = gcalMeetingsOpen ? 'Hide' : 'Show meetings';
+        toggle.onclick = () => {
+          gcalMeetingsOpen = !gcalMeetingsOpen;
+          toggle.textContent = gcalMeetingsOpen ? 'Hide' : 'Show meetings';
+          meetingsList.classList.toggle('open', gcalMeetingsOpen);
+        };
+        meta.appendChild(document.createTextNode(' · '));
+        meta.appendChild(toggle);
+      }
+      card.appendChild(meta);
+
+      // Meeting list
+      if (meetingCount > 0) {
+        const meetingsList = document.createElement('div');
+        meetingsList.className = 'gcal-meetings' + (gcalMeetingsOpen ? ' open' : '');
+
+        timedEvents.forEach(e => {
+          const start = new Date(e.start.dateTime);
+          const end   = new Date(e.end.dateTime);
+          const fmt12 = d => d.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' });
+          const item = document.createElement('div');
+          item.className = 'gcal-meeting-item';
+          item.innerHTML = `<span class="gcal-meeting-time">${fmt12(start)}–${fmt12(end)}</span>
+            <span>${escHtml(e.summary || '(no title)')}</span>`;
+          meetingsList.appendChild(item);
+        });
+
+        card.appendChild(meetingsList);
+
+        // Conflict warning
+        let warningText = '';
+        if (totalHrs > 6) {
+          warningText = 'Very heavy meeting day. Be realistic about what you can accomplish today.';
+        } else if (totalHrs > 4 && activeTasks > 4) {
+          warningText = `Heavy meeting day — consider narrowing your focus to your top 3 tasks. (${activeTasks} active tasks)`;
+        }
+
+        if (warningText) {
+          const warn = document.createElement('div');
+          warn.className = 'gcal-warning';
+          warn.textContent = warningText;
+          card.appendChild(warn);
+        }
+      }
+
+      sec.appendChild(card);
+    }
+
+    function showCalSetup() {
+      const sec = document.getElementById('gcal-section');
+      sec.innerHTML = '';
+
+      const setupCard = document.createElement('div');
+      setupCard.className = 'gcal-setup-card';
+      setupCard.innerHTML = `
+        <h3>Connect Google Calendar</h3>
+        <div class="gcal-steps">
+          <ol>
+            <li>Go to <a href="https://console.cloud.google.com" target="_blank" rel="noopener" style="color:#2563eb">console.cloud.google.com</a></li>
+            <li>Create a new project (or select an existing one)</li>
+            <li>Enable the <strong>Google Calendar API</strong> (APIs &amp; Services → Library)</li>
+            <li>Create OAuth credentials: APIs &amp; Services → Credentials → Create Credentials → OAuth client ID → Web application</li>
+            <li>Under <em>Authorized JavaScript origins</em>, add <code>https://andiegeorge.github.io</code></li>
+            <li>Under <em>OAuth consent screen</em> → Test users, add your Gmail address</li>
+            <li>Copy the <strong>Client ID</strong> and paste it below</li>
+          </ol>
+        </div>
+        <input type="text" id="gcal-client-id-input" placeholder="Paste your Client ID here…" autocomplete="off" />
+        <div class="form-actions">
+          <button class="cancel-btn" onclick="renderCalSection()">Cancel</button>
+          <button class="save-btn" onclick="gcalSaveClientId()">Save &amp; Connect</button>
+        </div>`;
+
+      sec.appendChild(setupCard);
+      setTimeout(() => document.getElementById('gcal-client-id-input')?.focus(), 50);
+    }
+
+    function gcalSaveClientId() {
+      const input = document.getElementById('gcal-client-id-input');
+      const id = input?.value.trim();
+      if (!id) return;
+      localStorage.setItem(GCAL_CLIENT_ID_KEY, id);
+      gcalConnect();
+    }
+
+    function gcalInitTokenClient() {
+      const clientId = gcalClientId();
+      if (!clientId) return null;
+      if (!window.google?.accounts?.oauth2) return null;
+      gcalTokenClient = google.accounts.oauth2.initTokenClient({
+        client_id: clientId,
+        scope: GCAL_SCOPE,
+        callback: (resp) => {
+          if (resp.error) { console.error('GCal auth error:', resp); renderCalSection(); return; }
+          gcalSaveToken(resp.access_token, resp.expires_in);
+          gcalEvents = null;
+          gcalFetchEvents();
+        },
+      });
+      return gcalTokenClient;
+    }
+
+    function gcalConnect() {
+      const client = gcalInitTokenClient();
+      if (!client) {
+        // GIS script not ready yet — retry shortly
+        setTimeout(gcalConnect, 500);
+        return;
+      }
+      client.requestAccessToken({ prompt: '' });
+    }
+
+    async function gcalFetchEvents() {
+      const token = gcalToken();
+      if (!token) { renderCalSection(); return; }
+
+      const startOfDay = new Date(); startOfDay.setHours(0,0,0,0);
+      const endOfDay   = new Date(); endOfDay.setHours(23,59,59,999);
+
+      const params = new URLSearchParams({
+        timeMin:      startOfDay.toISOString(),
+        timeMax:      endOfDay.toISOString(),
+        singleEvents: 'true',
+        orderBy:      'startTime',
+      });
+
+      try {
+        const res = await fetch(
+          `https://www.googleapis.com/calendar/v3/calendars/primary/events?${params}`,
+          { headers: { Authorization: 'Bearer ' + token } }
+        );
+        if (res.status === 401) {
+          // Token expired
+          localStorage.removeItem(GCAL_TOKEN_KEY);
+          localStorage.removeItem(GCAL_TOKEN_EXPIRY);
+          gcalEvents = null;
+          renderCalSection();
+          return;
+        }
+        const data = await res.json();
+        gcalEvents = data.items || [];
+      } catch (err) {
+        console.error('GCal fetch error:', err);
+        gcalEvents = [];
+      }
+
+      renderCalSection();
     }
 
     // ── Helpers ─────────────────────────────────────────
