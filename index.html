@@ -19,12 +19,38 @@
 
     .container { width: 100%; max-width: 600px; }
 
-    h1 {
-      font-size: 1.3rem;
-      font-weight: 600;
-      letter-spacing: -0.01em;
+    /* ── Top bar + tabs ── */
+    .top-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
       margin-bottom: 28px;
     }
+
+    h1 { font-size: 1.3rem; font-weight: 600; letter-spacing: -0.01em; }
+
+    .tab-bar {
+      display: flex;
+      gap: 2px;
+      background: #e4e1db;
+      border-radius: 8px;
+      padding: 3px;
+    }
+
+    .tab {
+      background: none;
+      border: none;
+      border-radius: 6px;
+      font-size: 0.82rem;
+      font-weight: 500;
+      color: #aaa;
+      padding: 5px 14px;
+      cursor: pointer;
+      transition: all 0.15s;
+      font-family: inherit;
+    }
+
+    .tab.active { background: #fff; color: #1c1c1c; box-shadow: 0 1px 2px rgba(0,0,0,0.08); }
 
     /* ── Add bar ── */
     .add-bar {
@@ -159,10 +185,10 @@
       cursor: pointer;
       background: none;
       padding: 0;
-      transition: border-color 0.15s;
+      transition: border-color 0.15s, background 0.15s;
     }
 
-    .check-btn:hover { border-color: #888; }
+    .check-btn:hover { border-color: #7bbf7b; background: #f0faf0; }
 
     .priority-dot {
       width: 7px;
@@ -238,7 +264,7 @@
 
     .d-value { color: #555; line-height: 1.4; }
 
-    .task-actions { margin-top: 10px; }
+    .task-actions { display: flex; gap: 8px; margin-top: 10px; }
 
     button.del-btn {
       background: none;
@@ -254,7 +280,7 @@
 
     button.del-btn:hover { border-color: #e55; color: #e55; }
 
-    /* ── Recurring active (in main list) ── */
+    /* ── Recurring active items ── */
     li.rec-item {
       background: #faf9f7;
       border: 1px solid #e8e5df;
@@ -284,13 +310,7 @@
 
     .rec-icon { font-size: 0.72rem; color: #d4d0c8; flex-shrink: 0; }
 
-    .tag {
-      font-size: 0.72rem;
-      padding: 2px 7px;
-      border-radius: 4px;
-      flex-shrink: 0;
-    }
-
+    .tag { font-size: 0.72rem; padding: 2px 7px; border-radius: 4px; flex-shrink: 0; }
     .tag-due  { background: #fde8e8; color: #c0392b; }
     .tag-soon { background: #f7f5f0; color: #aaa; }
 
@@ -323,7 +343,7 @@
       font-family: inherit;
     }
 
-    /* ── Recurring section (templates) ── */
+    /* ── Section dividers ── */
     .section-divider {
       border: none;
       border-top: 1px solid #e2e0db;
@@ -358,6 +378,7 @@
 
     button.sm-btn:hover { border-color: #aaa; color: #666; }
 
+    /* ── Recurring section ── */
     .add-rec-form {
       background: #fff;
       border: 1px solid #e2e0db;
@@ -390,11 +411,7 @@
       font-family: inherit;
     }
 
-    .form-actions {
-      display: flex;
-      gap: 8px;
-      justify-content: flex-end;
-    }
+    .form-actions { display: flex; gap: 8px; justify-content: flex-end; }
 
     button.save-btn {
       background: #1c1c1c;
@@ -406,9 +423,11 @@
       padding: 7px 16px;
       cursor: pointer;
       font-family: inherit;
+      transition: background 0.15s;
     }
 
     button.save-btn:hover { background: #333; }
+    button.save-btn.saved { background: #7bbf7b; }
 
     button.cancel-btn {
       background: none;
@@ -436,19 +455,12 @@
       margin-bottom: 6px;
     }
 
-    .rec-dot {
-      width: 7px;
-      height: 7px;
-      border-radius: 50%;
-      flex-shrink: 0;
-    }
-
+    .rec-dot { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; }
     .dot-active  { background: #7bbf7b; }
     .dot-snoozed { background: #d4d0c8; }
     .dot-due     { background: #e8854a; }
 
     .t-text { flex: 1; font-size: 0.88rem; color: #666; }
-
     .t-meta { font-size: 0.73rem; color: #c0bdb8; white-space: nowrap; }
     .t-meta .m-active { color: #7bbf7b; }
     .t-meta .m-due    { color: #e8854a; }
@@ -466,84 +478,233 @@
 
     button.x-btn:hover { color: #e55; }
 
+    /* ── Wrap-up section ── */
+    .completed-count-msg {
+      font-size: 0.83rem;
+      color: #aaa;
+      margin-bottom: 14px;
+    }
+
+    .mood-row {
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+      margin-bottom: 12px;
+    }
+
+    .mood-btn {
+      background: #f7f6f3;
+      border: 1px solid #e2e0db;
+      border-radius: 20px;
+      font-size: 0.82rem;
+      color: #888;
+      padding: 5px 13px;
+      cursor: pointer;
+      transition: all 0.15s;
+      font-family: inherit;
+    }
+
+    .mood-btn:hover { border-color: #bbb; color: #444; }
+    .mood-btn.selected { background: #1c1c1c; border-color: #1c1c1c; color: #fff; }
+
+    #recap-input {
+      width: 100%;
+      background: #fff;
+      border: 1px solid #e2e0db;
+      border-radius: 8px;
+      color: #1c1c1c;
+      font-size: 0.88rem;
+      font-family: inherit;
+      padding: 10px 12px;
+      outline: none;
+      resize: vertical;
+      min-height: 72px;
+      margin-bottom: 10px;
+      transition: border-color 0.15s;
+    }
+
+    #recap-input:focus { border-color: #bbb; }
+    #recap-input::placeholder { color: #c0bdb8; }
+
+    /* ── History tab ── */
+    .log-entry {
+      background: #fff;
+      border: 1px solid #e2e0db;
+      border-radius: 10px;
+      padding: 16px;
+      margin-bottom: 10px;
+    }
+
+    .log-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 10px;
+    }
+
+    .log-date { font-size: 0.88rem; font-weight: 500; color: #1c1c1c; }
+
+    .log-mood {
+      font-size: 0.73rem;
+      font-weight: 500;
+      padding: 3px 10px;
+      border-radius: 12px;
+    }
+
+    .mood-crushed { background: #e8f7e8; color: #2d7a2d; }
+    .mood-solid   { background: #e8f0fe; color: #2563eb; }
+    .mood-mixed   { background: #fef7e0; color: #92600a; }
+    .mood-behind  { background: #fff0e8; color: #b84a1a; }
+    .mood-rough   { background: #fde8e8; color: #c0392b; }
+
+    .log-recap {
+      font-size: 0.85rem;
+      color: #666;
+      line-height: 1.5;
+      margin-bottom: 10px;
+    }
+
+    .log-tasks { display: flex; flex-direction: column; gap: 4px; }
+
+    .log-task {
+      display: flex;
+      align-items: baseline;
+      gap: 7px;
+      font-size: 0.82rem;
+      color: #aaa;
+    }
+
+    .log-task::before { content: '✓'; font-size: 0.72rem; color: #bbb; flex-shrink: 0; }
+
+    .log-no-tasks { font-size: 0.82rem; color: #d4d0c8; }
+
     .empty-msg { font-size: 0.88rem; color: #ccc; padding: 10px 0; }
   </style>
 </head>
 <body>
   <div class="container">
-    <h1>To-Do</h1>
-
-    <div class="add-bar">
-      <div class="add-main">
-        <input class="headline-input" id="new-todo" type="text" placeholder="Add a task…" autocomplete="off" />
-        <button class="details-toggle" id="details-toggle" onclick="toggleDetails()">+ details</button>
-        <button class="add-btn" onclick="addTodo()">Add</button>
-      </div>
-      <div class="add-details" id="add-details">
-        <div>
-          <span class="field-label">Priority</span>
-          <select id="new-priority">
-            <option value="medium">Medium</option>
-            <option value="urgent">Urgent</option>
-            <option value="high">High</option>
-            <option value="low">Low</option>
-          </select>
-        </div>
-        <div>
-          <span class="field-label">Due date</span>
-          <input type="date" id="new-due" />
-        </div>
-        <div>
-          <span class="field-label">Category</span>
-          <input type="text" id="new-category" placeholder="e.g. Work, Learning…" />
-        </div>
-        <div class="full">
-          <span class="field-label">Context / notes</span>
-          <textarea id="new-context" placeholder="Any extra detail…"></textarea>
-        </div>
+    <div class="top-bar">
+      <h1>To-Do</h1>
+      <div class="tab-bar">
+        <button class="tab active" id="tab-today-btn" onclick="switchTab('today')">Today</button>
+        <button class="tab" id="tab-history-btn" onclick="switchTab('history')">History</button>
       </div>
     </div>
 
-    <ul class="task-list" id="active-list"></ul>
-
-    <hr class="section-divider" />
-
-    <div class="section-header">
-      <span class="section-label">Recurring</span>
-      <button class="sm-btn" onclick="toggleAddRec()">+ Add</button>
-    </div>
-
-    <div class="add-rec-form" id="add-rec-form">
-      <div class="add-main">
-        <input class="headline-input" id="new-rec-text" type="text" placeholder="Task name…" autocomplete="off" />
-      </div>
-      <div class="two-col">
-        <div>
-          <span class="field-label">Snooze until</span>
-          <input type="date" id="new-rec-snooze" />
+    <!-- TODAY PANEL -->
+    <div id="panel-today">
+      <div class="add-bar">
+        <div class="add-main">
+          <input class="headline-input" id="new-todo" type="text" placeholder="Add a task…" autocomplete="off" />
+          <button class="details-toggle" id="details-toggle" onclick="toggleDetails()">+ details</button>
+          <button class="add-btn" onclick="addTodo()">Add</button>
         </div>
-        <div>
-          <span class="field-label">Must do by</span>
-          <input type="date" id="new-rec-mustdo" />
+        <div class="add-details" id="add-details">
+          <div>
+            <span class="field-label">Priority</span>
+            <select id="new-priority">
+              <option value="medium">Medium</option>
+              <option value="urgent">Urgent</option>
+              <option value="high">High</option>
+              <option value="low">Low</option>
+            </select>
+          </div>
+          <div>
+            <span class="field-label">Due date</span>
+            <input type="date" id="new-due" />
+          </div>
+          <div>
+            <span class="field-label">Category</span>
+            <input type="text" id="new-category" placeholder="e.g. Work, Learning…" />
+          </div>
+          <div class="full">
+            <span class="field-label">Context / notes</span>
+            <textarea id="new-context" placeholder="Any extra detail…"></textarea>
+          </div>
         </div>
       </div>
+
+      <ul class="task-list" id="active-list"></ul>
+
+      <hr class="section-divider" />
+
+      <div class="section-header">
+        <span class="section-label">Recurring</span>
+        <button class="sm-btn" onclick="toggleAddRec()">+ Add</button>
+      </div>
+
+      <div class="add-rec-form" id="add-rec-form">
+        <div class="add-main">
+          <input class="headline-input" id="new-rec-text" type="text" placeholder="Task name…" autocomplete="off" />
+        </div>
+        <div class="two-col">
+          <div>
+            <span class="field-label">Snooze until</span>
+            <input type="date" id="new-rec-snooze" />
+          </div>
+          <div>
+            <span class="field-label">Must do by</span>
+            <input type="date" id="new-rec-mustdo" />
+          </div>
+        </div>
+        <div class="form-actions">
+          <button class="cancel-btn" onclick="toggleAddRec()">Cancel</button>
+          <button class="save-btn" onclick="addRecurring()">Add</button>
+        </div>
+      </div>
+
+      <ul class="rec-list" id="recurring-list"></ul>
+
+      <hr class="section-divider" />
+
+      <div class="section-header">
+        <span class="section-label">Wrap up today</span>
+      </div>
+
+      <p class="completed-count-msg" id="completed-count-msg"></p>
+
+      <div class="mood-row">
+        <button class="mood-btn" data-mood="Crushed it" onclick="selectMood(this)">Crushed it</button>
+        <button class="mood-btn" data-mood="Solid day"  onclick="selectMood(this)">Solid day</button>
+        <button class="mood-btn" data-mood="Mixed bag"  onclick="selectMood(this)">Mixed bag</button>
+        <button class="mood-btn" data-mood="Fell behind" onclick="selectMood(this)">Fell behind</button>
+        <button class="mood-btn" data-mood="Rough one"  onclick="selectMood(this)">Rough one</button>
+      </div>
+
+      <textarea id="recap-input" placeholder="Anything worth noting about today…"></textarea>
+
       <div class="form-actions">
-        <button class="cancel-btn" onclick="toggleAddRec()">Cancel</button>
-        <button class="save-btn" onclick="addRecurring()">Add</button>
+        <button class="save-btn" id="wrapup-save-btn" onclick="saveWrapup()">Save</button>
       </div>
     </div>
 
-    <ul class="rec-list" id="recurring-list"></ul>
+    <!-- HISTORY PANEL -->
+    <div id="panel-history" style="display:none">
+      <div id="history-content"></div>
+    </div>
   </div>
 
   <script>
     const KEY = 'andie-todos-v2';
+    let selectedMood = null;
+
+    const MOOD_CLASS = {
+      'Crushed it': 'mood-crushed',
+      'Solid day':  'mood-solid',
+      'Mixed bag':  'mood-mixed',
+      'Fell behind':'mood-behind',
+      'Rough one':  'mood-rough',
+    };
 
     function load() {
       try {
         const d = JSON.parse(localStorage.getItem(KEY));
-        return (d && Array.isArray(d.todos)) ? d : { todos: [], recurring: [] };
-      } catch { return { todos: [], recurring: [] }; }
+        if (d && Array.isArray(d.todos)) {
+          if (!d.log) d.log = [];
+          return d;
+        }
+      } catch {}
+      return { todos: [], recurring: [], log: [] };
     }
 
     function save(d) { localStorage.setItem(KEY, JSON.stringify(d)); }
@@ -578,11 +739,22 @@
     function isDue(r)    { return r.mustDoBy && r.mustDoBy <= today(); }
     function isSoon(r)   { return r.mustDoBy && r.mustDoBy > today() && addDays(3) >= r.mustDoBy; }
 
+    // ── Tab switching ─────────────────────────────────────
+
+    function switchTab(tab) {
+      document.getElementById('panel-today').style.display   = tab === 'today'   ? '' : 'none';
+      document.getElementById('panel-history').style.display = tab === 'history' ? '' : 'none';
+      document.getElementById('tab-today-btn').classList.toggle('active',   tab === 'today');
+      document.getElementById('tab-history-btn').classList.toggle('active', tab === 'history');
+      if (tab === 'history') renderHistory();
+    }
+
     // ── Render ───────────────────────────────────────────
 
     function render() {
       renderActive();
       renderRecurringList();
+      renderWrapup();
     }
 
     function renderActive() {
@@ -621,6 +793,44 @@
       recurring.forEach(r => list.appendChild(makeTemplateItem(r)));
     }
 
+    function renderWrapup() {
+      const data = load();
+      const entry = data.log.find(e => e.date === today());
+      const count = entry?.completed?.length || 0;
+
+      document.getElementById('completed-count-msg').textContent =
+        count === 0 ? 'No tasks completed yet today.' :
+        `${count} task${count !== 1 ? 's' : ''} completed today.`;
+
+      if (entry?.mood) {
+        selectedMood = entry.mood;
+        document.querySelectorAll('.mood-btn').forEach(b =>
+          b.classList.toggle('selected', b.dataset.mood === entry.mood));
+      }
+
+      if (entry?.recap && !document.getElementById('recap-input').value) {
+        document.getElementById('recap-input').value = entry.recap;
+      }
+    }
+
+    function renderHistory() {
+      const data = load();
+      const container = document.getElementById('history-content');
+      container.innerHTML = '';
+
+      const log = data.log.slice().reverse();
+
+      if (!log.length) {
+        const msg = document.createElement('p');
+        msg.className = 'empty-msg';
+        msg.textContent = 'No history yet. Save your first daily wrap-up to start tracking.';
+        container.appendChild(msg);
+        return;
+      }
+
+      log.forEach(entry => container.appendChild(makeLogEntry(entry)));
+    }
+
     // ── Item builders ────────────────────────────────────
 
     function makeTodoItem(todo) {
@@ -633,8 +843,8 @@
 
       const check = document.createElement('button');
       check.className = 'check-btn';
-      check.title = 'Complete';
-      check.onclick = e => { e.stopPropagation(); removeTodo(todo.id); };
+      check.title = 'Mark complete';
+      check.onclick = e => { e.stopPropagation(); completeTodo(todo.id); };
 
       const dot = document.createElement('span');
       dot.className = 'priority-dot';
@@ -663,7 +873,6 @@
 
       const detail = document.createElement('div');
       detail.className = 'task-detail';
-
       const hr = document.createElement('hr');
       hr.className = 'detail-divider';
       detail.append(hr);
@@ -686,7 +895,7 @@
       const del = document.createElement('button');
       del.className = 'del-btn';
       del.textContent = 'Delete';
-      del.onclick = () => removeTodo(todo.id);
+      del.onclick = () => deleteTodo(todo.id);
       actions.append(del);
       detail.append(actions);
 
@@ -780,6 +989,56 @@
       return li;
     }
 
+    function makeLogEntry(entry) {
+      const div = document.createElement('div');
+      div.className = 'log-entry';
+
+      const header = document.createElement('div');
+      header.className = 'log-header';
+
+      const date = document.createElement('span');
+      date.className = 'log-date';
+      date.textContent = new Date(entry.date + 'T00:00:00').toLocaleDateString('en-US', {
+        weekday: 'long', month: 'long', day: 'numeric'
+      });
+      header.appendChild(date);
+
+      if (entry.mood) {
+        const mood = document.createElement('span');
+        mood.className = 'log-mood ' + (MOOD_CLASS[entry.mood] || '');
+        mood.textContent = entry.mood;
+        header.appendChild(mood);
+      }
+
+      div.appendChild(header);
+
+      if (entry.recap) {
+        const recap = document.createElement('p');
+        recap.className = 'log-recap';
+        recap.textContent = entry.recap;
+        div.appendChild(recap);
+      }
+
+      if (entry.completed?.length) {
+        const tasks = document.createElement('div');
+        tasks.className = 'log-tasks';
+        entry.completed.forEach(t => {
+          const task = document.createElement('span');
+          task.className = 'log-task';
+          task.textContent = t.text;
+          tasks.appendChild(task);
+        });
+        div.appendChild(tasks);
+      } else if (!entry.recap) {
+        const none = document.createElement('span');
+        none.className = 'log-no-tasks';
+        none.textContent = 'No tasks logged.';
+        div.appendChild(none);
+      }
+
+      return div;
+    }
+
     // ── Actions ─────────────────────────────────────────
 
     function addTodo() {
@@ -805,11 +1064,47 @@
       render();
     }
 
-    function removeTodo(id) {
+    function completeTodo(id) {
+      const data = load();
+      const task = data.todos.find(t => t.id === id);
+      if (task) {
+        const t = today();
+        let entry = data.log.find(e => e.date === t);
+        if (!entry) { entry = { date: t, mood: null, recap: '', completed: [] }; data.log.push(entry); }
+        entry.completed.push({ id: task.id, text: task.text, category: task.category || null });
+      }
+      data.todos = data.todos.filter(t => t.id !== id);
+      save(data);
+      render();
+    }
+
+    function deleteTodo(id) {
       const data = load();
       data.todos = data.todos.filter(t => t.id !== id);
       save(data);
       render();
+    }
+
+    function selectMood(btn) {
+      selectedMood = btn.dataset.mood;
+      document.querySelectorAll('.mood-btn').forEach(b => b.classList.remove('selected'));
+      btn.classList.add('selected');
+    }
+
+    function saveWrapup() {
+      const data = load();
+      const t = today();
+      let entry = data.log.find(e => e.date === t);
+      if (!entry) { entry = { date: t, mood: null, recap: '', completed: [] }; data.log.push(entry); }
+      if (selectedMood) entry.mood = selectedMood;
+      entry.recap = document.getElementById('recap-input').value.trim();
+      save(data);
+
+      const btn = document.getElementById('wrapup-save-btn');
+      btn.textContent = 'Saved ✓';
+      btn.classList.add('saved');
+      setTimeout(() => { btn.textContent = 'Save'; btn.classList.remove('saved'); }, 2000);
+      renderWrapup();
     }
 
     function toggleDetails() {
