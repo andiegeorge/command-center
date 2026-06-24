@@ -9,174 +9,385 @@
 
     body {
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
-      background: #0f0f0f;
-      color: #e8e8e8;
+      background: #f0ede8;
+      color: #1c1c1c;
       min-height: 100vh;
       display: flex;
       justify-content: center;
-      padding: 60px 20px;
+      padding: 48px 20px;
     }
 
-    .container { width: 100%; max-width: 560px; }
+    .container { width: 100%; max-width: 600px; }
 
     h1 {
-      font-size: 1.4rem;
-      font-weight: 500;
-      color: #aaa;
-      letter-spacing: 0.05em;
-      text-transform: uppercase;
-      margin-bottom: 32px;
-    }
-
-    .input-row {
-      display: flex;
-      gap: 8px;
+      font-size: 1.3rem;
+      font-weight: 600;
+      letter-spacing: -0.01em;
       margin-bottom: 28px;
     }
 
-    input[type="text"] {
+    /* ── Add bar ── */
+    .add-bar {
+      background: #fff;
+      border: 1px solid #e2e0db;
+      border-radius: 10px;
+      margin-bottom: 16px;
+      overflow: hidden;
+    }
+
+    .add-main {
+      display: flex;
+      align-items: center;
+      padding: 10px 12px;
+      gap: 8px;
+    }
+
+    input.headline-input {
       flex: 1;
-      background: #1a1a1a;
-      border: 1px solid #2e2e2e;
-      border-radius: 8px;
-      color: #e8e8e8;
+      border: none;
+      background: transparent;
       font-size: 0.95rem;
-      padding: 10px 14px;
+      color: #1c1c1c;
       outline: none;
-      transition: border-color 0.15s;
+      font-family: inherit;
     }
 
-    input[type="text"]::placeholder { color: #555; }
-    input[type="text"]:focus { border-color: #555; }
+    input.headline-input::placeholder { color: #c0bdb8; }
 
-    input[type="date"] {
-      width: 100%;
-      background: #1a1a1a;
-      border: 1px solid #2e2e2e;
+    button.details-toggle {
+      background: none;
+      border: 1px solid #e2e0db;
+      color: #aaa;
       border-radius: 6px;
-      color: #e8e8e8;
-      font-size: 0.85rem;
-      padding: 7px 10px;
-      outline: none;
-      color-scheme: dark;
-      transition: border-color 0.15s;
+      font-size: 0.78rem;
+      padding: 4px 10px;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: all 0.15s;
+      font-family: inherit;
     }
 
-    input[type="date"]:focus { border-color: #555; }
+    button.details-toggle:hover { border-color: #bbb; color: #666; }
+    button.details-toggle.active { border-color: #bbb; color: #555; background: #f7f6f3; }
 
     button.add-btn {
-      background: #e8e8e8;
-      color: #0f0f0f;
+      background: #1c1c1c;
+      color: #fff;
       border: none;
-      border-radius: 8px;
-      font-size: 0.95rem;
+      border-radius: 6px;
+      font-size: 0.88rem;
       font-weight: 500;
-      padding: 10px 18px;
+      padding: 6px 16px;
       cursor: pointer;
       transition: background 0.15s;
       white-space: nowrap;
+      font-family: inherit;
     }
 
-    button.add-btn:hover { background: #fff; }
+    button.add-btn:hover { background: #333; }
 
-    ul { list-style: none; }
-
-    li.todo-item {
-      display: flex;
-      align-items: center;
-      flex-wrap: wrap;
-      gap: 12px;
-      padding: 11px 0;
-      border-bottom: 1px solid #1e1e1e;
+    .add-details {
+      border-top: 1px solid #f0ede8;
+      padding: 12px;
+      display: none;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
     }
 
-    li.todo-item:last-child { border-bottom: none; }
+    .add-details.open { display: grid; }
+    .add-details .full { grid-column: 1 / -1; }
 
-    .item-row {
-      display: flex;
-      align-items: center;
-      gap: 12px;
+    .field-label {
+      display: block;
+      font-size: 0.67rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: #bbb;
+      margin-bottom: 4px;
+    }
+
+    .add-details input,
+    .add-details select,
+    .add-details textarea {
       width: 100%;
+      background: #f7f6f3;
+      border: 1px solid #e2e0db;
+      border-radius: 6px;
+      color: #1c1c1c;
+      font-size: 0.88rem;
+      font-family: inherit;
+      padding: 7px 10px;
+      outline: none;
+      transition: border-color 0.15s;
     }
 
-    .checkbox {
+    .add-details input[type="date"] { color-scheme: light; }
+    .add-details input:focus,
+    .add-details select:focus,
+    .add-details textarea:focus { border-color: #bbb; background: #fff; }
+    .add-details textarea { resize: vertical; min-height: 60px; }
+
+    /* ── Task list ── */
+    ul.task-list { list-style: none; }
+
+    li.task-item {
+      background: #fff;
+      border: 1px solid #e2e0db;
+      border-radius: 10px;
+      margin-bottom: 6px;
+      overflow: hidden;
+      transition: box-shadow 0.15s;
+    }
+
+    li.task-item:hover { box-shadow: 0 1px 4px rgba(0,0,0,0.06); }
+
+    .task-main {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 12px 14px;
+      cursor: pointer;
+      user-select: none;
+    }
+
+    .check-btn {
       width: 18px;
       height: 18px;
-      border: 1.5px solid #3a3a3a;
+      border: 1.5px solid #d4d0c8;
       border-radius: 50%;
       flex-shrink: 0;
       cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      transition: border-color 0.15s, background 0.15s;
+      background: none;
+      padding: 0;
+      transition: border-color 0.15s;
     }
 
-    .checkbox:hover { border-color: #888; }
+    .check-btn:hover { border-color: #888; }
 
-    .todo-text {
-      flex: 1;
-      font-size: 0.95rem;
-      line-height: 1.4;
-    }
-
-    .recurring-icon {
-      font-size: 0.8rem;
-      color: #444;
+    .priority-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
       flex-shrink: 0;
     }
 
-    .tag {
+    .priority-dot[data-p="urgent"] { background: #d94f4f; }
+    .priority-dot[data-p="high"]   { background: #e8854a; }
+    .priority-dot[data-p="medium"] { background: #d4cfc6; }
+    .priority-dot[data-p="low"]    { background: #e2e0db; }
+
+    .task-text {
+      flex: 1;
+      font-size: 0.93rem;
+      line-height: 1.4;
+      color: #1c1c1c;
+    }
+
+    .due-chip {
       font-size: 0.73rem;
+      padding: 2px 8px;
+      border-radius: 4px;
+      background: #f0ede8;
+      color: #999;
+      flex-shrink: 0;
+      white-space: nowrap;
+    }
+
+    .due-chip.overdue { background: #fde8e8; color: #c0392b; }
+    .due-chip.today   { background: #e8f4e8; color: #2d7a2d; }
+
+    .chevron {
+      font-size: 0.8rem;
+      color: #d4d0c8;
+      flex-shrink: 0;
+      transition: transform 0.18s;
+      line-height: 1;
+    }
+
+    li.task-item.expanded .chevron { transform: rotate(90deg); }
+
+    .task-detail {
+      display: none;
+      padding: 0 14px 12px;
+    }
+
+    li.task-item.expanded .task-detail { display: block; }
+
+    .detail-divider {
+      border: none;
+      border-top: 1px solid #f0ede8;
+      margin-bottom: 10px;
+    }
+
+    .detail-row {
+      display: flex;
+      gap: 12px;
+      padding: 4px 0;
+      font-size: 0.84rem;
+    }
+
+    .d-label {
+      color: #c0bdb8;
+      width: 68px;
+      flex-shrink: 0;
+      font-size: 0.72rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      padding-top: 2px;
+    }
+
+    .d-value { color: #555; line-height: 1.4; }
+
+    .task-actions { margin-top: 10px; }
+
+    button.del-btn {
+      background: none;
+      border: 1px solid #e2e0db;
+      color: #c0bdb8;
+      border-radius: 6px;
+      font-size: 0.78rem;
+      padding: 4px 12px;
+      cursor: pointer;
+      transition: all 0.15s;
+      font-family: inherit;
+    }
+
+    button.del-btn:hover { border-color: #e55; color: #e55; }
+
+    /* ── Recurring active (in main list) ── */
+    li.rec-item {
+      background: #faf9f7;
+      border: 1px solid #e8e5df;
+      border-radius: 10px;
+      margin-bottom: 6px;
+      overflow: hidden;
+    }
+
+    .rec-main {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 12px 14px;
+    }
+
+    .rec-circle {
+      width: 18px;
+      height: 18px;
+      border: 1.5px solid #d4d0c8;
+      border-radius: 50%;
+      flex-shrink: 0;
+      cursor: pointer;
+      transition: border-color 0.15s;
+    }
+
+    .rec-circle:hover { border-color: #888; }
+
+    .rec-icon { font-size: 0.72rem; color: #d4d0c8; flex-shrink: 0; }
+
+    .tag {
+      font-size: 0.72rem;
       padding: 2px 7px;
       border-radius: 4px;
       flex-shrink: 0;
     }
 
-    .tag-due    { background: #3a1a0a; color: #e8854a; }
-    .tag-soon   { background: #1a1a2a; color: #7a7aaa; }
+    .tag-due  { background: #fde8e8; color: #c0392b; }
+    .tag-soon { background: #f7f5f0; color: #aaa; }
 
-    .delete-btn {
-      background: none;
-      border: none;
-      color: #2e2e2e;
-      font-size: 1.1rem;
-      cursor: pointer;
-      padding: 0 4px;
-      line-height: 1;
-      transition: color 0.15s;
-      flex-shrink: 0;
+    .rec-complete-form {
+      border-top: 1px solid #f0ede8;
+      padding: 12px 14px;
+      display: none;
+      background: #f7f6f3;
     }
 
-    .item-row:hover .delete-btn { color: #666; }
-    .delete-btn:hover { color: #e55 !important; }
+    .rec-complete-form.open { display: block; }
 
-    /* Inline completion form */
-    .complete-form {
+    .cf-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 10px;
+      margin-bottom: 10px;
+    }
+
+    .cf-grid input[type="date"] {
       width: 100%;
-      background: #161616;
-      border: 1px solid #2a2a2a;
-      border-radius: 8px;
+      background: #fff;
+      border: 1px solid #e2e0db;
+      border-radius: 6px;
+      color: #1c1c1c;
+      font-size: 0.83rem;
+      padding: 6px 10px;
+      outline: none;
+      color-scheme: light;
+      font-family: inherit;
+    }
+
+    /* ── Recurring section (templates) ── */
+    .section-divider {
+      border: none;
+      border-top: 1px solid #e2e0db;
+      margin: 32px 0 22px;
+    }
+
+    .section-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 12px;
+    }
+
+    .section-label {
+      font-size: 0.67rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: #c0bdb8;
+    }
+
+    button.sm-btn {
+      background: none;
+      border: 1px solid #e2e0db;
+      color: #bbb;
+      border-radius: 6px;
+      font-size: 0.78rem;
+      padding: 3px 10px;
+      cursor: pointer;
+      transition: all 0.15s;
+      font-family: inherit;
+    }
+
+    button.sm-btn:hover { border-color: #aaa; color: #666; }
+
+    .add-rec-form {
+      background: #fff;
+      border: 1px solid #e2e0db;
+      border-radius: 10px;
       padding: 14px;
+      margin-bottom: 12px;
       display: none;
     }
 
-    .complete-form.open { display: block; }
+    .add-rec-form.open { display: block; }
+    .add-rec-form .add-main { padding: 0 0 12px; }
 
-    .form-grid {
+    .two-col {
       display: grid;
-      grid-template-columns: 1fr 1fr 1fr;
+      grid-template-columns: 1fr 1fr;
       gap: 10px;
       margin-bottom: 12px;
     }
 
-    .form-field label {
-      display: block;
-      font-size: 0.68rem;
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
-      color: #555;
-      margin-bottom: 5px;
+    .two-col input[type="date"] {
+      width: 100%;
+      background: #f7f6f3;
+      border: 1px solid #e2e0db;
+      border-radius: 6px;
+      color: #1c1c1c;
+      font-size: 0.88rem;
+      padding: 7px 10px;
+      outline: none;
+      color-scheme: light;
+      font-family: inherit;
     }
 
     .form-actions {
@@ -186,151 +397,143 @@
     }
 
     button.save-btn {
-      background: #e8e8e8;
-      color: #0f0f0f;
+      background: #1c1c1c;
+      color: #fff;
       border: none;
       border-radius: 6px;
       font-size: 0.85rem;
       font-weight: 500;
-      padding: 7px 14px;
+      padding: 7px 16px;
       cursor: pointer;
+      font-family: inherit;
     }
 
-    button.save-btn:hover { background: #fff; }
+    button.save-btn:hover { background: #333; }
 
     button.cancel-btn {
       background: none;
-      border: 1px solid #2e2e2e;
-      color: #777;
+      border: 1px solid #e2e0db;
+      color: #aaa;
       border-radius: 6px;
       font-size: 0.85rem;
       padding: 7px 14px;
       cursor: pointer;
+      font-family: inherit;
     }
 
-    button.cancel-btn:hover { border-color: #555; color: #aaa; }
+    button.cancel-btn:hover { border-color: #aaa; color: #666; }
 
-    /* Recurring section */
-    .section-divider {
-      border: none;
-      border-top: 1px solid #1e1e1e;
-      margin: 36px 0 24px;
-    }
-
-    .section-header {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      margin-bottom: 14px;
-    }
-
-    .section-label {
-      font-size: 0.7rem;
-      letter-spacing: 0.1em;
-      text-transform: uppercase;
-      color: #444;
-    }
-
-    button.icon-btn {
-      background: none;
-      border: 1px solid #2e2e2e;
-      color: #666;
-      border-radius: 6px;
-      font-size: 0.82rem;
-      padding: 3px 10px;
-      cursor: pointer;
-      transition: border-color 0.15s, color 0.15s;
-    }
-
-    button.icon-btn:hover { border-color: #555; color: #aaa; }
-
-    .add-recurring-form {
-      background: #161616;
-      border: 1px solid #2a2a2a;
-      border-radius: 8px;
-      padding: 14px;
-      margin-bottom: 16px;
-      display: none;
-    }
-
-    .add-recurring-form.open { display: block; }
-    .add-recurring-form .input-row { margin-bottom: 10px; }
-    .add-recurring-form .form-grid { grid-template-columns: 1fr 1fr; }
+    ul.rec-list { list-style: none; }
 
     li.template-item {
       display: flex;
       align-items: center;
-      gap: 12px;
-      padding: 10px 0;
-      border-bottom: 1px solid #1e1e1e;
+      gap: 10px;
+      padding: 9px 14px;
+      background: #fff;
+      border: 1px solid #e2e0db;
+      border-radius: 8px;
+      margin-bottom: 6px;
     }
 
-    li.template-item:last-child { border-bottom: none; }
-
-    .template-text {
-      flex: 1;
-      font-size: 0.92rem;
-      color: #ccc;
-    }
-
-    .template-meta {
-      font-size: 0.75rem;
-      color: #555;
-      text-align: right;
+    .rec-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
       flex-shrink: 0;
-      white-space: nowrap;
     }
 
-    .template-meta .m-active { color: #5a8a5a; }
-    .template-meta .m-due    { color: #e8854a; }
+    .dot-active  { background: #7bbf7b; }
+    .dot-snoozed { background: #d4d0c8; }
+    .dot-due     { background: #e8854a; }
 
-    .empty {
-      color: #333;
-      font-size: 0.9rem;
-      padding: 10px 0;
-      display: block;
+    .t-text { flex: 1; font-size: 0.88rem; color: #666; }
+
+    .t-meta { font-size: 0.73rem; color: #c0bdb8; white-space: nowrap; }
+    .t-meta .m-active { color: #7bbf7b; }
+    .t-meta .m-due    { color: #e8854a; }
+
+    button.x-btn {
+      background: none;
+      border: none;
+      color: #ddd;
+      font-size: 1rem;
+      cursor: pointer;
+      padding: 0 2px;
+      line-height: 1;
+      transition: color 0.15s;
     }
+
+    button.x-btn:hover { color: #e55; }
+
+    .empty-msg { font-size: 0.88rem; color: #ccc; padding: 10px 0; }
   </style>
 </head>
 <body>
   <div class="container">
     <h1>To-Do</h1>
 
-    <div class="input-row">
-      <input type="text" id="new-todo" placeholder="Add a task…" autocomplete="off" />
-      <button class="add-btn" onclick="addTodo()">Add</button>
+    <div class="add-bar">
+      <div class="add-main">
+        <input class="headline-input" id="new-todo" type="text" placeholder="Add a task…" autocomplete="off" />
+        <button class="details-toggle" id="details-toggle" onclick="toggleDetails()">+ details</button>
+        <button class="add-btn" onclick="addTodo()">Add</button>
+      </div>
+      <div class="add-details" id="add-details">
+        <div>
+          <span class="field-label">Priority</span>
+          <select id="new-priority">
+            <option value="medium">Medium</option>
+            <option value="urgent">Urgent</option>
+            <option value="high">High</option>
+            <option value="low">Low</option>
+          </select>
+        </div>
+        <div>
+          <span class="field-label">Due date</span>
+          <input type="date" id="new-due" />
+        </div>
+        <div>
+          <span class="field-label">Category</span>
+          <input type="text" id="new-category" placeholder="e.g. Work, Learning…" />
+        </div>
+        <div class="full">
+          <span class="field-label">Context / notes</span>
+          <textarea id="new-context" placeholder="Any extra detail…"></textarea>
+        </div>
+      </div>
     </div>
 
-    <ul id="active-list"></ul>
+    <ul class="task-list" id="active-list"></ul>
 
     <hr class="section-divider" />
 
     <div class="section-header">
       <span class="section-label">Recurring</span>
-      <button class="icon-btn" onclick="toggleAddRecurring()">+ Add</button>
+      <button class="sm-btn" onclick="toggleAddRec()">+ Add</button>
     </div>
 
-    <div class="add-recurring-form" id="add-recurring-form">
-      <div class="input-row">
-        <input type="text" id="new-rec-text" placeholder="Task name…" autocomplete="off" />
+    <div class="add-rec-form" id="add-rec-form">
+      <div class="add-main">
+        <input class="headline-input" id="new-rec-text" type="text" placeholder="Task name…" autocomplete="off" />
       </div>
-      <div class="form-grid">
-        <div class="form-field">
-          <label>Snooze until</label>
+      <div class="two-col">
+        <div>
+          <span class="field-label">Snooze until</span>
           <input type="date" id="new-rec-snooze" />
         </div>
-        <div class="form-field">
-          <label>Must do by</label>
+        <div>
+          <span class="field-label">Must do by</span>
           <input type="date" id="new-rec-mustdo" />
         </div>
       </div>
       <div class="form-actions">
-        <button class="cancel-btn" onclick="toggleAddRecurring()">Cancel</button>
+        <button class="cancel-btn" onclick="toggleAddRec()">Cancel</button>
         <button class="save-btn" onclick="addRecurring()">Add</button>
       </div>
     </div>
 
-    <ul id="recurring-list"></ul>
+    <ul class="rec-list" id="recurring-list"></ul>
   </div>
 
   <script>
@@ -343,7 +546,7 @@
       } catch { return { todos: [], recurring: [] }; }
     }
 
-    function save(data) { localStorage.setItem(KEY, JSON.stringify(data)); }
+    function save(d) { localStorage.setItem(KEY, JSON.stringify(d)); }
 
     function today() { return new Date().toISOString().slice(0, 10); }
 
@@ -358,18 +561,31 @@
       return new Date(s + 'T00:00:00').toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
     }
 
-    function isActive(r)  { return !r.snoozeUntil || r.snoozeUntil <= today(); }
-    function isDue(r)     { return r.mustDoBy && r.mustDoBy <= today(); }
-    function isUpcoming(r){ return r.mustDoBy && r.mustDoBy > today() && addDays(3) >= r.mustDoBy; }
+    function fmtDue(s) {
+      if (!s) return null;
+      const t = today();
+      if (s < t) return { label: 'Overdue', cls: 'overdue' };
+      if (s === t) return { label: 'Today', cls: 'today' };
+      const d = new Date(s + 'T00:00:00');
+      const diff = Math.round((d - new Date(t + 'T00:00:00')) / 86400000);
+      const days = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+      if (diff === 1) return { label: 'Tomorrow', cls: '' };
+      if (diff <= 6) return { label: days[d.getDay()], cls: '' };
+      return { label: fmt(s), cls: '' };
+    }
 
-    // ── Render ──────────────────────────────────────────────
+    function isActive(r) { return !r.snoozeUntil || r.snoozeUntil <= today(); }
+    function isDue(r)    { return r.mustDoBy && r.mustDoBy <= today(); }
+    function isSoon(r)   { return r.mustDoBy && r.mustDoBy > today() && addDays(3) >= r.mustDoBy; }
+
+    // ── Render ───────────────────────────────────────────
 
     function render() {
-      renderActiveList();
+      renderActive();
       renderRecurringList();
     }
 
-    function renderActiveList() {
+    function renderActive() {
       const { todos, recurring } = load();
       const list = document.getElementById('active-list');
       list.innerHTML = '';
@@ -378,12 +594,15 @@
       const activeRec   = recurring.filter(isActive);
 
       if (!activeTodos.length && !activeRec.length) {
-        list.innerHTML = '<li class="todo-item"><span class="empty">Nothing here yet.</span></li>';
+        const msg = document.createElement('p');
+        msg.className = 'empty-msg';
+        msg.textContent = 'Nothing here yet.';
+        list.appendChild(msg);
         return;
       }
 
       activeTodos.forEach(t => list.appendChild(makeTodoItem(t)));
-      activeRec.forEach(r  => list.appendChild(makeRecurringItem(r)));
+      activeRec.forEach(r   => list.appendChild(makeRecItem(r)));
     }
 
     function renderRecurringList() {
@@ -392,101 +611,142 @@
       list.innerHTML = '';
 
       if (!recurring.length) {
-        list.innerHTML = '<li class="template-item"><span class="empty">No recurring tasks yet.</span></li>';
+        const msg = document.createElement('p');
+        msg.className = 'empty-msg';
+        msg.textContent = 'No recurring tasks yet.';
+        list.appendChild(msg);
         return;
       }
 
       recurring.forEach(r => list.appendChild(makeTemplateItem(r)));
     }
 
-    // ── Item builders ────────────────────────────────────────
+    // ── Item builders ────────────────────────────────────
 
     function makeTodoItem(todo) {
       const li = document.createElement('li');
-      li.className = 'todo-item';
+      li.className = 'task-item';
 
-      const row = document.createElement('div');
-      row.className = 'item-row';
+      const main = document.createElement('div');
+      main.className = 'task-main';
+      main.onclick = () => li.classList.toggle('expanded');
 
-      const box = el('div', 'checkbox');
-      box.onclick = () => removeTodo(todo.id);
+      const check = document.createElement('button');
+      check.className = 'check-btn';
+      check.title = 'Complete';
+      check.onclick = e => { e.stopPropagation(); removeTodo(todo.id); };
 
-      const text = el('span', 'todo-text');
+      const dot = document.createElement('span');
+      dot.className = 'priority-dot';
+      dot.dataset.p = todo.priority || 'medium';
+
+      const text = document.createElement('span');
+      text.className = 'task-text';
       text.textContent = todo.text;
 
-      const del = deleteBtn(() => removeTodo(todo.id));
+      main.append(check, dot, text);
 
-      row.append(box, text, del);
-      li.append(row);
+      if (todo.due) {
+        const due = fmtDue(todo.due);
+        if (due) {
+          const chip = document.createElement('span');
+          chip.className = 'due-chip' + (due.cls ? ' ' + due.cls : '');
+          chip.textContent = due.label;
+          main.append(chip);
+        }
+      }
+
+      const chevron = document.createElement('span');
+      chevron.className = 'chevron';
+      chevron.textContent = '›';
+      main.append(chevron);
+
+      const detail = document.createElement('div');
+      detail.className = 'task-detail';
+
+      const hr = document.createElement('hr');
+      hr.className = 'detail-divider';
+      detail.append(hr);
+
+      const rows = [];
+      if (todo.priority) rows.push(['Priority', todo.priority[0].toUpperCase() + todo.priority.slice(1)]);
+      if (todo.due)      rows.push(['Due', fmt(todo.due)]);
+      if (todo.category) rows.push(['Category', todo.category]);
+      if (todo.context)  rows.push(['Context', todo.context]);
+
+      rows.forEach(([label, value]) => {
+        const row = document.createElement('div');
+        row.className = 'detail-row';
+        row.innerHTML = `<span class="d-label">${label}</span><span class="d-value">${value}</span>`;
+        detail.append(row);
+      });
+
+      const actions = document.createElement('div');
+      actions.className = 'task-actions';
+      const del = document.createElement('button');
+      del.className = 'del-btn';
+      del.textContent = 'Delete';
+      del.onclick = () => removeTodo(todo.id);
+      actions.append(del);
+      detail.append(actions);
+
+      li.append(main, detail);
       return li;
     }
 
-    function makeRecurringItem(r) {
+    function makeRecItem(r) {
       const li = document.createElement('li');
-      li.className = 'todo-item';
+      li.className = 'rec-item';
 
-      const row = document.createElement('div');
-      row.className = 'item-row';
+      const main = document.createElement('div');
+      main.className = 'rec-main';
 
-      const box = el('div', 'checkbox');
-      box.title = 'Mark done…';
-      box.onclick = () => form.classList.toggle('open');
+      const circle = document.createElement('div');
+      circle.className = 'rec-circle';
+      circle.title = 'Mark done…';
+      circle.onclick = () => form.classList.toggle('open');
 
-      const text = el('span', 'todo-text');
+      const text = document.createElement('span');
+      text.className = 'task-text';
       text.textContent = r.text;
 
-      const icon = el('span', 'recurring-icon');
+      const icon = document.createElement('span');
+      icon.className = 'rec-icon';
       icon.textContent = '↻';
 
-      row.append(box, text, icon);
+      main.append(circle, text, icon);
 
       if (isDue(r)) {
-        const tag = el('span', 'tag tag-due');
+        const tag = document.createElement('span');
+        tag.className = 'tag tag-due';
         tag.textContent = 'due ' + fmt(r.mustDoBy);
-        row.append(tag);
-      } else if (isUpcoming(r) && r.mustDoBy) {
-        const tag = el('span', 'tag tag-soon');
+        main.append(tag);
+      } else if (isSoon(r)) {
+        const tag = document.createElement('span');
+        tag.className = 'tag tag-soon';
         tag.textContent = 'by ' + fmt(r.mustDoBy);
-        row.append(tag);
-      } else if (r.mustDoBy) {
-        const tag = el('span', 'tag');
-        tag.style.color = '#555';
-        tag.textContent = 'by ' + fmt(r.mustDoBy);
-        row.append(tag);
+        main.append(tag);
       }
 
-      row.append(deleteBtn(() => removeRecurring(r.id)));
-
       const form = makeCompleteForm(r.id);
-
-      li.append(row, form);
+      li.append(main, form);
       return li;
     }
 
     function makeCompleteForm(id) {
-      const div = el('div', 'complete-form');
+      const div = document.createElement('div');
+      div.className = 'rec-complete-form';
       const t = today();
-
       div.innerHTML = `
-        <div class="form-grid">
-          <div class="form-field">
-            <label>Completed on</label>
-            <input type="date" id="cf-done-${id}" value="${t}" max="${t}" />
-          </div>
-          <div class="form-field">
-            <label>Snooze until</label>
-            <input type="date" id="cf-snooze-${id}" value="${addDays(7)}" />
-          </div>
-          <div class="form-field">
-            <label>Must do by</label>
-            <input type="date" id="cf-mustdo-${id}" value="${addDays(10)}" />
-          </div>
+        <div class="cf-grid">
+          <div><span class="field-label">Completed on</span><input type="date" id="cf-done-${id}" value="${t}" max="${t}" /></div>
+          <div><span class="field-label">Snooze until</span><input type="date" id="cf-snooze-${id}" value="${addDays(7)}" /></div>
+          <div><span class="field-label">Must do by</span><input type="date" id="cf-mustdo-${id}" value="${addDays(10)}" /></div>
         </div>
         <div class="form-actions">
-          <button class="cancel-btn" onclick="closeCompleteForm(${id})">Cancel</button>
+          <button class="cancel-btn" onclick="this.closest('.rec-complete-form').classList.remove('open')">Cancel</button>
           <button class="save-btn" onclick="saveCompletion(${id})">Save</button>
         </div>`;
-
       return div;
     }
 
@@ -494,35 +754,54 @@
       const li = document.createElement('li');
       li.className = 'template-item';
 
-      const text = el('span', 'template-text');
+      const dot = document.createElement('span');
+      dot.className = 'rec-dot ' + (isDue(r) ? 'dot-due' : isActive(r) ? 'dot-active' : 'dot-snoozed');
+
+      const text = document.createElement('span');
+      text.className = 't-text';
       text.textContent = r.text;
 
-      const meta = el('span', 'template-meta');
+      const meta = document.createElement('span');
+      meta.className = 't-meta';
       if (isDue(r)) {
         meta.innerHTML = `<span class="m-due">due ${fmt(r.mustDoBy)}</span>`;
       } else if (isActive(r)) {
-        meta.innerHTML = `<span class="m-active">active</span>` +
-          (r.mustDoBy ? ` · by ${fmt(r.mustDoBy)}` : '');
+        meta.innerHTML = `<span class="m-active">active</span>` + (r.mustDoBy ? ` · by ${fmt(r.mustDoBy)}` : '');
       } else {
-        meta.textContent = `back ${fmt(r.snoozeUntil)}` +
-          (r.mustDoBy ? ` · by ${fmt(r.mustDoBy)}` : '');
-        if (r.lastCompleted) meta.textContent += ` · done ${fmt(r.lastCompleted)}`;
+        meta.textContent = `back ${fmt(r.snoozeUntil)}` + (r.mustDoBy ? ` · by ${fmt(r.mustDoBy)}` : '');
       }
 
-      li.append(text, meta, deleteBtn(() => removeRecurring(r.id)));
+      const del = document.createElement('button');
+      del.className = 'x-btn';
+      del.textContent = '×';
+      del.onclick = () => removeRecurring(r.id);
+
+      li.append(dot, text, meta, del);
       return li;
     }
 
-    // ── Actions ──────────────────────────────────────────────
+    // ── Actions ─────────────────────────────────────────
 
     function addTodo() {
       const input = document.getElementById('new-todo');
       const text = input.value.trim();
       if (!text) return;
       const data = load();
-      data.todos.unshift({ id: Date.now(), text, done: false });
+      data.todos.unshift({
+        id: Date.now(), text, done: false,
+        priority: document.getElementById('new-priority').value,
+        due:      document.getElementById('new-due').value || null,
+        category: document.getElementById('new-category').value.trim() || null,
+        context:  document.getElementById('new-context').value.trim() || null,
+      });
       save(data);
       input.value = '';
+      document.getElementById('new-due').value = '';
+      document.getElementById('new-category').value = '';
+      document.getElementById('new-context').value = '';
+      document.getElementById('new-priority').value = 'medium';
+      document.getElementById('add-details').classList.remove('open');
+      document.getElementById('details-toggle').classList.remove('active');
       render();
     }
 
@@ -533,28 +812,13 @@
       render();
     }
 
-    function closeCompleteForm(id) {
-      document.getElementById('cf-done-' + id)?.closest('.complete-form')?.classList.remove('open');
+    function toggleDetails() {
+      document.getElementById('add-details').classList.toggle('open');
+      document.getElementById('details-toggle').classList.toggle('active');
     }
 
-    function saveCompletion(id) {
-      const completed = document.getElementById('cf-done-' + id)?.value;
-      const snooze    = document.getElementById('cf-snooze-' + id)?.value || null;
-      const mustdo    = document.getElementById('cf-mustdo-' + id)?.value || null;
-
-      const data = load();
-      const r = data.recurring.find(x => x.id === id);
-      if (r) {
-        r.lastCompleted = completed || today();
-        r.snoozeUntil   = snooze;
-        r.mustDoBy      = mustdo;
-      }
-      save(data);
-      render();
-    }
-
-    function toggleAddRecurring() {
-      const form = document.getElementById('add-recurring-form');
+    function toggleAddRec() {
+      const form = document.getElementById('add-rec-form');
       form.classList.toggle('open');
       if (form.classList.contains('open')) document.getElementById('new-rec-text').focus();
     }
@@ -564,17 +828,27 @@
       if (!text) return;
       const data = load();
       data.recurring.push({
-        id: Date.now(),
-        text,
-        snoozeUntil:   document.getElementById('new-rec-snooze').value || null,
-        mustDoBy:      document.getElementById('new-rec-mustdo').value || null,
-        lastCompleted: null
+        id: Date.now(), text, lastCompleted: null,
+        snoozeUntil: document.getElementById('new-rec-snooze').value || null,
+        mustDoBy:    document.getElementById('new-rec-mustdo').value || null,
       });
       save(data);
       document.getElementById('new-rec-text').value = '';
       document.getElementById('new-rec-snooze').value = '';
       document.getElementById('new-rec-mustdo').value = '';
-      document.getElementById('add-recurring-form').classList.remove('open');
+      document.getElementById('add-rec-form').classList.remove('open');
+      render();
+    }
+
+    function saveCompletion(id) {
+      const data = load();
+      const r = data.recurring.find(x => x.id === id);
+      if (r) {
+        r.lastCompleted = document.getElementById('cf-done-' + id)?.value || today();
+        r.snoozeUntil   = document.getElementById('cf-snooze-' + id)?.value || null;
+        r.mustDoBy      = document.getElementById('cf-mustdo-' + id)?.value || null;
+      }
+      save(data);
       render();
     }
 
@@ -585,66 +859,34 @@
       render();
     }
 
-    // ── Helpers ──────────────────────────────────────────────
-
-    function el(tag, cls) {
-      const e = document.createElement(tag);
-      if (cls) e.className = cls;
-      return e;
-    }
-
-    function deleteBtn(fn) {
-      const b = el('button', 'delete-btn');
-      b.textContent = '×';
-      b.onclick = fn;
-      return b;
-    }
-
-    // ── Seed ─────────────────────────────────────────────────
+    // ── Seed ────────────────────────────────────────────
 
     function seedIfNeeded() {
       const data = load();
       if (data.seeded) return;
-
       const now = Date.now();
-
-      const seedTodos = [
+      [
         'Wed EOD (hard): VIP Slack workflow – solo brainstorm + build + test',
         'End of week: Mima – net zero + daily evals',
         'End of week: Coach – daily evals',
         'End of week: Darrell Younger hypothesis-check with Coco',
-      ];
-
-      const seedRecurring = [
+      ].forEach((text, i) => data.todos.push({ id: now + i, text, done: false, priority: 'medium', due: null, category: null, context: null }));
+      [
         'GitHub – primer → Q&A conversation → quiz (concepts, workflows, spot gaps, eventually contribute to structure)',
         'DBT & DBT modeling – same learning arc (prove you can hang with analytical engineering without becoming one)',
         'AI infrastructure & service account value prop – where things are hosted, strands, local vs shared, how GitHub fits in, why Snowflake service account matters',
-        'Ops OS literacy (Matt Hardy & Annie\'s build)',
+        "Ops OS literacy (Matt Hardy & Annie's build)",
         'Claude managed agents & Claude tag',
         'Command center in Claude Code – build + refine',
-      ];
-
-      seedTodos.forEach((text, i) => {
-        data.todos.push({ id: now + i, text, done: false });
-      });
-
-      seedRecurring.forEach((text, i) => {
-        data.recurring.push({ id: now + 100 + i, text, snoozeUntil: null, mustDoBy: null, lastCompleted: null });
-      });
-
+      ].forEach((text, i) => data.recurring.push({ id: now + 100 + i, text, snoozeUntil: null, mustDoBy: null, lastCompleted: null }));
       data.seeded = true;
       save(data);
     }
 
-    // ── Init ─────────────────────────────────────────────────
+    // ── Init ────────────────────────────────────────────
 
-    document.getElementById('new-todo').addEventListener('keydown', e => {
-      if (e.key === 'Enter') addTodo();
-    });
-
-    document.getElementById('new-rec-text').addEventListener('keydown', e => {
-      if (e.key === 'Enter') addRecurring();
-    });
+    document.getElementById('new-todo').addEventListener('keydown', e => { if (e.key === 'Enter') addTodo(); });
+    document.getElementById('new-rec-text').addEventListener('keydown', e => { if (e.key === 'Enter') addRecurring(); });
 
     seedIfNeeded();
     render();
