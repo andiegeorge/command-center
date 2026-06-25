@@ -729,6 +729,129 @@
     button.master-btn:hover { background: #f0faf0; border-color: #7bbf7b; }
     button.unmaster-btn { color: #aaa; }
     button.unmaster-btn:hover { color: #888; background: #f7f6f3; border-color: #bbb; }
+
+    /* ── Morning focus card ── */
+    .focus-card {
+      background: #fff;
+      border: 1px solid #e2e0db;
+      border-radius: 10px;
+      padding: 14px 16px;
+      margin-bottom: 14px;
+    }
+
+    .focus-heading {
+      font-size: 0.75rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: #bbb;
+      margin-bottom: 10px;
+    }
+
+    .focus-question {
+      font-size: 0.85rem;
+      color: #666;
+      margin-bottom: 10px;
+    }
+
+    .focus-set-items {
+      display: flex;
+      flex-direction: column;
+      gap: 7px;
+      margin-bottom: 8px;
+    }
+
+    .focus-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 0.88rem;
+      color: #1c1c1c;
+    }
+
+    .focus-num {
+      font-size: 0.75rem;
+      font-weight: 700;
+      color: #d4b06a;
+      min-width: 14px;
+    }
+
+    .focus-edit-link {
+      font-size: 0.75rem;
+      color: #bbb;
+      background: none;
+      border: none;
+      cursor: pointer;
+      font-family: inherit;
+      padding: 0;
+      text-decoration: underline;
+      text-underline-offset: 2px;
+    }
+
+    .focus-edit-link:hover { color: #888; }
+
+    .focus-inputs { display: flex; flex-direction: column; gap: 7px; margin-bottom: 10px; }
+
+    .focus-inputs input {
+      background: #f7f6f3;
+      border: 1px solid #e2e0db;
+      border-radius: 6px;
+      color: #1c1c1c;
+      font-size: 0.88rem;
+      font-family: inherit;
+      padding: 7px 10px;
+      outline: none;
+      transition: border-color 0.15s;
+      width: 100%;
+    }
+
+    .focus-inputs input:focus { border-color: #bbb; background: #fff; }
+
+    /* ── Mood trend ── */
+    .mood-trend-card {
+      background: #fff;
+      border: 1px solid #e2e0db;
+      border-radius: 10px;
+      padding: 14px 16px;
+      margin-bottom: 20px;
+    }
+
+    .trend-label {
+      font-size: 0.75rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: #bbb;
+      margin-bottom: 12px;
+    }
+
+    .mood-dots {
+      display: flex;
+      gap: 4px;
+      align-items: flex-end;
+    }
+
+    .mood-dot-col {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+      flex: 1;
+    }
+
+    .mood-dot {
+      width: 100%;
+      aspect-ratio: 1;
+      border-radius: 4px;
+      min-width: 10px;
+      cursor: default;
+    }
+
+    .mood-dot-day {
+      font-size: 0.65rem;
+      color: #ccc;
+      font-weight: 500;
+    }
   </style>
 </head>
 <body>
@@ -744,6 +867,7 @@
 
     <!-- TODAY -->
     <div id="panel-today">
+      <div id="focus-section"></div>
       <div class="add-bar">
         <div class="add-main">
           <input class="headline-input" id="new-todo" type="text" placeholder="Add a task…" autocomplete="off" />
@@ -855,9 +979,10 @@
 
   <script>
     const KEY = 'andie-todos-v2';
-    let selectedMood = null;
-    let showMastered = false;
-    let editingId = null;
+    let selectedMood  = null;
+    let showMastered  = false;
+    let editingId     = null;
+    let editingFocus  = false;
 
     const MOOD_CLASS = {
       'Crushed it': 'mood-crushed',
@@ -873,8 +998,9 @@
       try {
         const d = JSON.parse(localStorage.getItem(KEY));
         if (d && Array.isArray(d.todos)) {
-          if (!d.log)   d.log = [];
-          if (!d.learn) d.learn = [];
+          if (!d.log)     d.log = [];
+          if (!d.learn)   d.learn = [];
+          if (!d.focuses) d.focuses = [];
           return d;
         }
       } catch {}
@@ -937,6 +1063,7 @@
     // ── Render ───────────────────────────────────────────
 
     function render() {
+      renderFocus();
       renderActive();
       renderRecurringList();
       renderWrapup();
@@ -948,7 +1075,26 @@
       list.innerHTML = '';
 
       const activeTodos = todos.filter(t => !t.done);
-      const activeRec   = recurring.filter(isActive);
+      const PSCORE = { urgent: 0, high: 1, medium: 2, low: 3 };
+      activeTodos.sort((a, b) => {
+        const t = today();
+        const aOD = a.due && a.due < t ? 1 : 0;
+        const bOD = b.due && b.due < t ? 1 : 0;
+        if (aOD !== bOD) return bOD - aOD;
+        const pDiff = (PSCORE[a.priority] ?? 2) - (PSCORE[b.priority] ?? 2);
+        if (pDiff !== 0) return pDiff;
+        if (a.due && b.due) return a.due < b.due ? -1 : 1;
+        if (a.due) return -1;
+        if (b.due) return 1;
+        return 0;
+      });
+
+      const activeRec = recurring.filter(isActive);
+      activeRec.sort((a, b) => {
+        const aD = isDue(a) ? 2 : isSoon(a) ? 1 : 0;
+        const bD = isDue(b) ? 2 : isSoon(b) ? 1 : 0;
+        return bD - aD;
+      });
 
       if (!activeTodos.length && !activeRec.length) {
         const msg = document.createElement('p');
@@ -1005,6 +1151,8 @@
 
       const log = data.log.slice().reverse();
 
+      container.appendChild(makeMoodTrend(data));
+
       if (!log.length) {
         const msg = document.createElement('p');
         msg.className = 'empty-msg';
@@ -1014,6 +1162,54 @@
       }
 
       log.forEach(entry => container.appendChild(makeLogEntry(entry)));
+    }
+
+    function makeMoodTrend(data) {
+      const MOOD_COLOR = {
+        'Crushed it': '#7bbf7b',
+        'Solid day':  '#6ba8d4',
+        'Mixed bag':  '#d4b06a',
+        'Fell behind':'#d4906a',
+        'Rough one':  '#d47a7a',
+      };
+
+      const moodMap = {};
+      data.log.forEach(e => { if (e.mood) moodMap[e.date] = e.mood; });
+
+      const card = document.createElement('div');
+      card.className = 'mood-trend-card';
+
+      const lbl = document.createElement('div');
+      lbl.className = 'trend-label';
+      lbl.textContent = 'Mood — last 14 days';
+      card.appendChild(lbl);
+
+      const dots = document.createElement('div');
+      dots.className = 'mood-dots';
+
+      for (let i = 13; i >= 0; i--) {
+        const date = addDays(-i);
+        const mood = moodMap[date];
+        const dayName = ['S','M','T','W','T','F','S'][new Date(date + 'T00:00:00').getDay()];
+
+        const col = document.createElement('div');
+        col.className = 'mood-dot-col';
+
+        const dot = document.createElement('div');
+        dot.className = 'mood-dot';
+        dot.style.background = mood ? (MOOD_COLOR[mood] || '#e8e5e0') : '#e8e5e0';
+        dot.title = mood ? `${fmt(date)}: ${mood}` : fmt(date);
+
+        const dl = document.createElement('div');
+        dl.className = 'mood-dot-day';
+        dl.textContent = dayName;
+
+        col.append(dot, dl);
+        dots.appendChild(col);
+      }
+
+      card.appendChild(dots);
+      return card;
     }
 
     function renderLearn() {
@@ -1419,6 +1615,93 @@
       }
 
       return div;
+    }
+
+    // ── Focus ────────────────────────────────────────────
+
+    function renderFocus() {
+      const sec = document.getElementById('focus-section');
+      if (!sec) return;
+      sec.innerHTML = '';
+
+      const data = load();
+      const todayFocus = data.focuses.find(f => f.date === today());
+
+      const card = document.createElement('div');
+      card.className = 'focus-card';
+
+      const heading = document.createElement('div');
+      heading.className = 'focus-heading';
+      heading.textContent = "Today's priorities";
+      card.appendChild(heading);
+
+      if (todayFocus && !editingFocus) {
+        const list = document.createElement('div');
+        list.className = 'focus-set-items';
+        todayFocus.items.filter(x => x).forEach((item, i) => {
+          const row = document.createElement('div');
+          row.className = 'focus-item';
+          row.innerHTML = `<span class="focus-num">${i + 1}</span><span>${escHtml(item)}</span>`;
+          list.appendChild(row);
+        });
+        card.appendChild(list);
+
+        const editBtn = document.createElement('button');
+        editBtn.className = 'focus-edit-link';
+        editBtn.textContent = 'Edit priorities';
+        editBtn.onclick = () => { editingFocus = true; renderFocus(); };
+        card.appendChild(editBtn);
+      } else {
+        const q = document.createElement('p');
+        q.className = 'focus-question';
+        q.textContent = 'What are your top 3 priorities today?';
+        card.appendChild(q);
+
+        const inputs = document.createElement('div');
+        inputs.className = 'focus-inputs';
+        const existing = todayFocus?.items || ['', '', ''];
+        for (let i = 0; i < 3; i++) {
+          const inp = document.createElement('input');
+          inp.type = 'text';
+          inp.id = `focus-inp-${i}`;
+          inp.placeholder = `Priority ${i + 1}…`;
+          inp.value = existing[i] || '';
+          inp.addEventListener('keydown', e => { if (e.key === 'Enter') saveFocus(); });
+          inputs.appendChild(inp);
+        }
+        card.appendChild(inputs);
+
+        const actions = document.createElement('div');
+        actions.className = 'form-actions';
+        if (todayFocus) {
+          const cancel = document.createElement('button');
+          cancel.className = 'cancel-btn';
+          cancel.textContent = 'Cancel';
+          cancel.onclick = () => { editingFocus = false; renderFocus(); };
+          actions.appendChild(cancel);
+        }
+        const saveBtn = document.createElement('button');
+        saveBtn.className = 'save-btn';
+        saveBtn.textContent = 'Set priorities';
+        saveBtn.onclick = saveFocus;
+        actions.appendChild(saveBtn);
+        card.appendChild(actions);
+      }
+
+      sec.appendChild(card);
+    }
+
+    function saveFocus() {
+      const items = [0, 1, 2].map(i => document.getElementById(`focus-inp-${i}`)?.value.trim() || '');
+      if (!items.some(x => x)) return;
+      const data = load();
+      const idx = data.focuses.findIndex(f => f.date === today());
+      const entry = { date: today(), items };
+      if (idx >= 0) data.focuses[idx] = entry;
+      else data.focuses.push(entry);
+      save(data);
+      editingFocus = false;
+      renderFocus();
     }
 
     // ── Today actions ───────────────────────────────────
